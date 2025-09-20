@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Morse Practice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 1em;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 { font-size: 1.4em; text-align: center; }
+    #lessonInfo { text-align: center; margin: 1em 0; font-size: 1.2em; }
+    button {
+      font-size: 1.2em;
+      padding: 0.6em 0.8em;
+      margin: 0.3em;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #f8f8f8;
+      flex: 1 0 14%;
+    }
+    #playBtn, #nextBtn {
+      width: 100%;
+      margin-top: 0.6em;
+      font-weight: bold;
+      background: #eef;
+    }
+    #keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1em;
+    }
+    #output {
+      margin-top: 1em;
+      font-size: 1.3em;
+      text-align: center;
+      min-height: 2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Morse Practice</h1>
+  <div id="lessonInfo">
+    Lesson <span id="lessonNum"></span>: <span id="chars"></span>
+  </div>
+
+  <button id="playBtn">🔊 Play Character</button>
+  <div id="keyboard"></div>
+  <div id="output"></div>
+  <button id="nextBtn">➡️ Next Lesson</button>
+
+<script>
+const lessons = [
+  ["K","M"], ["K","M","R"], ["K","M","R","S"], ["K","M","R","S","U"],
+  ["K","M","R","S","U","A"], ["K","M","R","S","U","A","P"],
+  ["K","M","R","S","U","A","P","T"], ["K","M","R","S","U","A","P","T","L"],
+  ["K","M","R","S","U","A","P","T","L","O"],
+  ["K","M","R","S","U","A","P","T","L","O","W"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D","6"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D","6","X"],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D","6","X","="],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D","6","X","=","."],
+  ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D","6","X","=",".",","]
+];
+
+let lesson = parseInt(localStorage.getItem("lesson") || "0");
+let correct = 0, total = 0;
+const wpm = 20, dot = 1.2 / wpm;
+
+const morseMap = {
+  A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.",
+  G: "--.", H: "....", I: "..", J: ".---", K: "-.-", L: ".-..",
+  M: "--", N: "-.", O: "---", P: ".--.", Q: "--.-", R: ".-.",
+  S: "...", T: "-", U: "..-", V: "...-", W: ".--", X: "-..-",
+  Y: "-.--", Z: "--..",
+  "0": "-----","1": ".----","2": "..---","3": "...--","4": "....-",
+  "5": ".....","6": "-....","7": "--...","8": "---..","9": "----.",
+  "/": "-..-.","?": "..--..","=": "-...-",".": ".-.-.-",",": "--..--"
+};
+
+function playMorse(char) {
+  const code = morseMap[char];
+  if (!code) return;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.frequency.value = 600; osc.start();
+  let t = 0;
+  for (let s of code) {
+    gain.gain.setValueAtTime(1, ctx.currentTime + t);
+    t += (s==="." ? dot : 3*dot);
+    gain.gain.setValueAtTime(0, ctx.currentTime + t);
+    t += dot;
+  }
+  osc.stop(ctx.currentTime + t);
+}
+
+function updateLesson() {
+  document.getElementById("lessonNum").textContent = lesson+1;
+  document.getElementById("chars").textContent = lessons[lesson].join(" ");
+}
+updateLesson();
+
+let currentChar = null;
+document.getElementById("playBtn").onclick = () => {
+  const chars = lessons[lesson];
+  currentChar = chars[Math.floor(Math.random()*chars.length)];
+  playMorse(currentChar);
+};
+
+// build keyboard
+const kb = document.getElementById("keyboard");
+for (let c of "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?.=,") {
+  const b = document.createElement("button");
+  b.textContent = c;
+  b.onclick = () => checkGuess(c);
+  kb.appendChild(b);
+}
+
+function checkGuess(g) {
+  if (!currentChar) return;
+  total++;
+  if (g === currentChar) {
+    correct++;
+    document.getElementById("output").textContent = "✅ Correct!";
+  } else {
+    document.getElementById("output").textContent = `❌ Wrong, it was ${currentChar}`;
+  }
+  currentChar = null; // reset until next play
+}
+
+document.getElementById("nextBtn").onclick = () => {
+  if (correct/total >= 0.9 && lesson < lessons.length-1) {
+    lesson++;
+    localStorage.setItem("lesson", lesson);
+    correct = 0; total = 0;
+    updateLesson();
+    document.getElementById("output").textContent = "Advanced to next lesson!";
+  } else {
+    document.getElementById("output").textContent = "Need ≥90% accuracy to advance.";
+  }
+};
+</script>
+</body>
+</html>
