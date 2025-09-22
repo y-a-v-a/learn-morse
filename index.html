@@ -48,6 +48,24 @@
     Lesson <span id="lessonNum"></span>: <span id="chars"></span>
   </div>
 
+  <div id="settings" style="text-align: center; margin: 1em 0; font-size: 0.9em;">
+    <div>Overall WPM: <input type="range" id="wpmSlider" min="5" max="20" step="1" style="width: min(150px, 60vw); max-width: 150px;">
+    <span id="wpmValue"></span> WPM</div>
+    <div style="font-size: 0.8em; color: #666; margin-top: 0.3em;">Character speed: 20 WPM</div>
+  </div>
+
+  <div id="progress" style="text-align: center; margin: 1em 0;">
+    <div id="sessionStats" style="font-size: 1.1em; margin-bottom: 0.5em;">
+      Accuracy: <span id="accuracy">0</span>% (<span id="correctCount">0</span>/<span id="totalCount">0</span> correct)
+    </div>
+    <div id="progressBar" style="width: 100%; background: #eee; border-radius: 10px; height: 20px; margin: 0.5em 0;">
+      <div id="progressFill" style="width: 0%; background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3); height: 100%; border-radius: 10px; transition: width 0.3s;"></div>
+    </div>
+    <div id="advanceInfo" style="font-size: 0.9em; color: #666;">
+      Need 90% to advance • <span id="estimatedAttempts">0</span> more attempts estimated
+    </div>
+  </div>
+
   <button id="playBtn">🔊 Play Character</button>
   <div id="keyboard"></div>
   <div id="output"></div>
@@ -92,9 +110,53 @@ const lessons = [
   ["K","M","R","S","U","A","P","T","L","O","W","I","N","J","E","F","0","Y","V","G","5","/","Q","9","Z","H","3","8","B","?","4","2","7","C","1","D","6","X","=",".",","]
 ];
 
-let lesson = parseInt(localStorage.getItem("lesson") || "0");
+let lesson = parseInt(localStorage.getItem("lesson") || "2"); // Start at lesson 3 (K,M,R,S)
 let correct = 0, total = 0;
-const wpm = 20, dot = 1.2 / wpm;
+const characterWPM = 20;
+let overallWPM = parseInt(localStorage.getItem("overallWPM") || "8");
+const dot = 1.2 / characterWPM;
+const charSpacing = 3 * dot; // Standard 3-dot spacing between characters
+const wordSpacing = 7 * dot; // Standard 7-dot spacing between words
+let farnsworthCharSpacing = (60 / (overallWPM * 5)) - (60 / (characterWPM * 5)); // Extra spacing for Farnsworth
+
+// Character accuracy tracking
+let charStats = JSON.parse(localStorage.getItem("charStats") || "{}");
+
+// Session history tracking
+let sessionHistory = JSON.parse(localStorage.getItem("sessionHistory") || "[]");
+
+function updateCharStats(char, wasCorrect) {
+  if (!charStats[char]) {
+    charStats[char] = { correct: 0, total: 0 };
+  }
+  charStats[char].total++;
+  if (wasCorrect) charStats[char].correct++;
+  localStorage.setItem("charStats", JSON.stringify(charStats));
+}
+
+function getCharAccuracy(char) {
+  const stats = charStats[char];
+  return stats ? (stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0) : 0;
+}
+
+function saveSessionData() {
+  const sessionData = {
+    date: new Date().toISOString().split('T')[0],
+    lesson: lesson + 1,
+    accuracy: total > 0 ? Math.round((correct / total) * 100) : 0,
+    correct: correct,
+    total: total,
+    overallWPM: overallWPM,
+    timestamp: Date.now()
+  };
+
+  // Add to session history (keep last 30 sessions)
+  sessionHistory.push(sessionData);
+  if (sessionHistory.length > 30) {
+    sessionHistory = sessionHistory.slice(-30);
+  }
+  localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
+}
 
 const morseMap = {
   A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.",
@@ -116,25 +178,98 @@ function playMorse(char) {
   osc.connect(gain); gain.connect(ctx.destination);
   osc.frequency.value = 600; osc.start();
   let t = 0;
-  for (let s of code) {
+
+  // Play character at full speed
+  for (let i = 0; i < code.length; i++) {
+    const s = code[i];
     gain.gain.setValueAtTime(1, ctx.currentTime + t);
-    t += (s==="." ? dot : 3*dot);
+    t += (s === "." ? dot : 3 * dot);
     gain.gain.setValueAtTime(0, ctx.currentTime + t);
-    t += dot;
+    if (i < code.length - 1) t += dot; // Inter-element spacing
   }
+
+  // Add Farnsworth spacing after character (if overall WPM < character WPM)
+  if (overallWPM < characterWPM) {
+    t += Math.max(0, farnsworthCharSpacing);
+  } else {
+    t += charSpacing; // Standard spacing
+  }
+
   osc.stop(ctx.currentTime + t);
 }
 
 function updateLesson() {
   document.getElementById("lessonNum").textContent = lesson+1;
-  document.getElementById("chars").textContent = lessons[lesson].join(" ");
+  // Hide the character list - students must learn by sound only
+  document.getElementById("chars").textContent = `${lessons[lesson].length} characters`;
+  updateProgressDisplay();
 }
+
+function updateProgressDisplay() {
+  const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const progressPercent = Math.min(100, (accuracy / 90) * 100);
+
+  document.getElementById("accuracy").textContent = accuracy;
+  document.getElementById("correctCount").textContent = correct;
+  document.getElementById("totalCount").textContent = total;
+  document.getElementById("progressFill").style.width = progressPercent + "%";
+
+  // Estimate attempts needed to reach 90%
+  let estimatedAttempts = 0;
+  if (accuracy < 90 && total > 0) {
+    const targetCorrect = Math.ceil(0.9 * (total + estimatedAttempts));
+    estimatedAttempts = Math.max(0, targetCorrect - correct);
+    if (estimatedAttempts === 0) estimatedAttempts = Math.ceil((9 * total - 10 * correct) / 1);
+  }
+
+  document.getElementById("estimatedAttempts").textContent = estimatedAttempts;
+
+  // Update color based on accuracy
+  const progressFill = document.getElementById("progressFill");
+  if (accuracy >= 90) {
+    progressFill.style.background = "#0abde3";
+  } else if (accuracy >= 70) {
+    progressFill.style.background = "#feca57";
+  } else {
+    progressFill.style.background = "#ff6b6b";
+  }
+}
+
+function updateWPMDisplay() {
+  document.getElementById("wpmSlider").value = overallWPM;
+  document.getElementById("wpmValue").textContent = overallWPM;
+}
+
 updateLesson();
+updateWPMDisplay();
+updateCharacterKeyboard();
+
+// WPM slider event handler
+document.getElementById("wpmSlider").oninput = (e) => {
+  overallWPM = parseInt(e.target.value);
+  farnsworthCharSpacing = (60 / (overallWPM * 5)) - (60 / (characterWPM * 5));
+  localStorage.setItem("overallWPM", overallWPM);
+  updateWPMDisplay();
+};
 
 let currentChar = null;
 document.getElementById("playBtn").onclick = () => {
-  const chars = lessons[lesson];
-  currentChar = chars[Math.floor(Math.random()*chars.length)];
+  const currentLessonChars = lessons[lesson];
+  const previousChars = lesson > 0 ? lessons[lesson - 1] : [];
+
+  // Mix 70% current lesson chars + 30% previous chars for review
+  const mixedChars = [...currentLessonChars];
+  if (previousChars.length > 0) {
+    const reviewCount = Math.max(1, Math.floor(currentLessonChars.length * 0.3));
+    for (let i = 0; i < reviewCount; i++) {
+      const reviewChar = previousChars[Math.floor(Math.random() * previousChars.length)];
+      if (!mixedChars.includes(reviewChar)) {
+        mixedChars.push(reviewChar);
+      }
+    }
+  }
+
+  currentChar = mixedChars[Math.floor(Math.random() * mixedChars.length)];
   playMorse(currentChar);
 };
 
@@ -143,33 +278,95 @@ const kb = document.getElementById("keyboard");
 for (let c of "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?.=,") {
   const b = document.createElement("button");
   b.textContent = c;
+  b.id = `key-${c}`;
   b.onclick = () => checkGuess(c);
   kb.appendChild(b);
+}
+
+function updateCharacterKeyboard() {
+  // Color-code keys based on individual character accuracy
+  const currentChars = lessons[lesson];
+  for (let c of "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?.=,") {
+    const key = document.getElementById(`key-${c}`);
+    if (!key) continue; // Skip if key doesn't exist
+
+    if (currentChars.includes(c)) {
+      const accuracy = getCharAccuracy(c);
+      const stats = charStats[c];
+
+      if (!stats || stats.total < 3) {
+        // Not enough data - neutral
+        key.style.backgroundColor = "#f8f8f8";
+      } else if (accuracy >= 85) {
+        // Good accuracy - green
+        key.style.backgroundColor = "#d4edda";
+        key.style.borderColor = "#28a745";
+      } else if (accuracy >= 60) {
+        // Medium accuracy - yellow
+        key.style.backgroundColor = "#fff3cd";
+        key.style.borderColor = "#ffc107";
+      } else {
+        // Poor accuracy - red (needs practice)
+        key.style.backgroundColor = "#f8d7da";
+        key.style.borderColor = "#dc3545";
+      }
+
+      // Add accuracy info to title
+      if (stats && stats.total > 0) {
+        key.title = `${c}: ${accuracy}% (${stats.correct}/${stats.total})`;
+      }
+    } else {
+      // Reset style for characters not in current lesson
+      key.style.backgroundColor = "#f8f8f8";
+      key.style.borderColor = "#ccc";
+      key.title = "";
+    }
+  }
 }
 
 function checkGuess(g) {
   if (!currentChar) return;
   total++;
-  if (g === currentChar) {
+  const wasCorrect = g === currentChar;
+
+  if (wasCorrect) {
     correct++;
     document.getElementById("output").textContent = "✅ Correct!";
   } else {
     document.getElementById("output").textContent = `❌ Wrong, it was ${currentChar}`;
   }
+
+  updateCharStats(currentChar, wasCorrect);
+  updateProgressDisplay();
+  updateCharacterKeyboard();
+  autoSaveCheck();
   currentChar = null; // reset until next play
 }
 
 document.getElementById("nextBtn").onclick = () => {
   if (correct/total >= 0.9 && lesson < lessons.length-1) {
+    // Save session data before advancing
+    saveSessionData();
+
     lesson++;
     localStorage.setItem("lesson", lesson);
     correct = 0; total = 0;
     updateLesson();
+    updateCharacterKeyboard();
     document.getElementById("output").textContent = "Advanced to next lesson!";
   } else {
     document.getElementById("output").textContent = "Need ≥90% accuracy to advance.";
   }
 };
+
+// Auto-save session data periodically (every 10 correct answers)
+let lastSaveCount = 0;
+function autoSaveCheck() {
+  if (correct > 0 && correct % 10 === 0 && correct !== lastSaveCount) {
+    saveSessionData();
+    lastSaveCount = correct;
+  }
+}
 </script>
 </body>
 </html>
