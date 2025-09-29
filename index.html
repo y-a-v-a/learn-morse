@@ -344,7 +344,8 @@ function checkGuess(g) {
 }
 
 document.getElementById("nextBtn").onclick = () => {
-  if (correct/total >= 0.9 && lesson < lessons.length-1) {
+  const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+  if (accuracy >= 90 && lesson < lessons.length-1) {
     // Save session data before advancing
     saveSessionData();
 
