@@ -41,10 +41,86 @@
       text-align: center;
       min-height: 2em;
     }
+
+    /* Progress Drawer Styles */
+    .progress-section {
+      margin-bottom: 1.5em;
+      padding: 0.8em;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    .progress-section h3 {
+      margin: 0 0 0.8em 0;
+      font-size: 1.1em;
+      color: #333;
+    }
+    .char-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3em;
+      margin-top: 0.5em;
+    }
+    .char-item {
+      width: 2.2em;
+      height: 2.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.9em;
+      color: white;
+    }
+    .char-mastered { background: #28a745; }
+    .char-learning { background: #ffc107; color: #333; }
+    .char-trouble { background: #dc3545; }
+    .char-unlearned { background: #6c757d; }
+
+    .history-bar {
+      display: flex;
+      align-items: end;
+      gap: 0.2em;
+      height: 50px;
+      margin: 0.5em 0;
+    }
+    .history-day {
+      flex: 1;
+      background: #e9ecef;
+      min-height: 5px;
+      border-radius: 2px;
+    }
+    .history-day.active {
+      background: linear-gradient(to top, #007bff 0%, #0056b3 100%);
+    }
+
+    .lesson-roadmap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3em;
+      margin-top: 0.5em;
+    }
+    .lesson-item {
+      padding: 0.3em 0.6em;
+      border-radius: 15px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+    .lesson-completed { background: #d4edda; color: #155724; }
+    .lesson-current { background: #007bff; color: white; }
+    .lesson-upcoming { background: #e2e3e5; color: #6c757d; }
+
+    @media (min-width: 768px) {
+      #progressDrawer {
+        width: 350px;
+        max-width: 350px;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>Morse Practice</h1>
+  <button id="progressToggle" style="position: absolute; top: 1em; right: 1em; background: #f8f8f8; border: 1px solid #ccc; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2em; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center;">📊</button>
   <div id="lessonInfo">
     Lesson <span id="lessonNum"></span>: <span id="chars"></span>
   </div>
@@ -71,6 +147,83 @@
   <div id="keyboard"></div>
   <div id="output"></div>
   <button id="nextBtn">➡️ Next Lesson</button>
+
+  <!-- Progress Drawer -->
+  <div id="progressOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;"></div>
+  <div id="progressDrawer" style="position: fixed; top: 0; right: -100%; width: 80%; max-width: 350px; height: 100%; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.3); z-index: 1002; transition: right 0.3s ease; overflow-y: auto;">
+    <div style="padding: 1em;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em; border-bottom: 1px solid #eee; padding-bottom: 0.5em;">
+        <h2 style="margin: 0; font-size: 1.3em;">Progress Insights</h2>
+        <button id="closeProgress" style="background: none; border: none; font-size: 1.5em; cursor: pointer; padding: 0.2em;">×</button>
+      </div>
+
+      <div id="progressContent">
+        <!-- Session Overview -->
+        <div class="progress-section">
+          <h3>Current Session</h3>
+          <div style="font-size: 1.1em; margin-bottom: 0.5em;">
+            <strong>Lesson <span id="drawerLessonNum">1</span></strong>
+          </div>
+          <div style="margin-bottom: 0.3em;">
+            Accuracy: <strong><span id="drawerAccuracy">0</span>%</strong> (<span id="drawerCorrect">0</span>/<span id="drawerTotal">0</span>)
+          </div>
+          <div style="font-size: 0.9em; color: #666;">
+            <span id="drawerEstimate">0</span> attempts to advance
+          </div>
+        </div>
+
+        <!-- Character Mastery -->
+        <div class="progress-section">
+          <h3>Character Mastery</h3>
+          <div id="characterMastery">
+            <!-- Character grid will be populated by JavaScript -->
+          </div>
+          <div style="margin-top: 0.8em; font-size: 0.8em; color: #666;">
+            🟢 Mastered ≥85% • 🟡 Learning ≥60% • 🔴 Needs Practice &lt;60% • ⚫ Not Started
+          </div>
+        </div>
+
+        <!-- Learning History -->
+        <div class="progress-section">
+          <h3>7-Day Practice History</h3>
+          <div id="practiceHistory">
+            <div class="history-bar" id="historyChart">
+              <!-- History bars will be populated by JavaScript -->
+            </div>
+            <div style="font-size: 0.8em; color: #666; text-align: center;">
+              Last 7 days
+            </div>
+          </div>
+          <div style="margin-top: 0.8em;">
+            <div>Total Characters Mastered: <strong><span id="totalMastered">0</span></strong></div>
+            <div>Lessons Completed: <strong><span id="lessonsCompleted">0</span></strong></div>
+          </div>
+        </div>
+
+        <!-- Lesson Roadmap -->
+        <div class="progress-section">
+          <h3>Koch Method Progress</h3>
+          <div id="lessonRoadmap">
+            <!-- Lesson items will be populated by JavaScript -->
+          </div>
+          <div style="margin-top: 0.8em; font-size: 0.9em; color: #666;">
+            Next characters to learn: <strong><span id="nextChars">-</span></strong>
+          </div>
+        </div>
+
+        <!-- Reset Progress -->
+        <div class="progress-section" style="border-left-color: #dc3545;">
+          <h3>Reset Progress</h3>
+          <div style="margin-bottom: 0.8em; font-size: 0.9em; color: #666;">
+            This will clear all your progress data, statistics, and reset you back to lesson 1.
+          </div>
+          <button id="resetProgress" style="background: #dc3545; color: white; border: none; padding: 0.6em 1.2em; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
+            🗑️ Reset All Progress
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
 const lessons = [
@@ -369,6 +522,178 @@ function autoSaveCheck() {
     lastSaveCount = correct;
   }
 }
+
+// Progress Drawer Functionality
+function toggleProgressDrawer() {
+  const drawer = document.getElementById("progressDrawer");
+  const overlay = document.getElementById("progressOverlay");
+
+  if (drawer.style.right === "0px") {
+    // Close drawer
+    drawer.style.right = "-100%";
+    overlay.style.display = "none";
+  } else {
+    // Open drawer and update content
+    updateProgressContent();
+    drawer.style.right = "0px";
+    overlay.style.display = "block";
+  }
+}
+
+function updateProgressContent() {
+  // Update session overview
+  document.getElementById("drawerLessonNum").textContent = lesson + 1;
+  document.getElementById("drawerAccuracy").textContent = total > 0 ? Math.round((correct / total) * 100) : 0;
+  document.getElementById("drawerCorrect").textContent = correct;
+  document.getElementById("drawerTotal").textContent = total;
+
+  const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+  let estimatedAttempts = 0;
+  if (accuracy < 90 && total > 0) {
+    const targetCorrect = Math.ceil(0.9 * (total + estimatedAttempts));
+    estimatedAttempts = Math.max(0, targetCorrect - correct);
+    if (estimatedAttempts === 0) estimatedAttempts = Math.ceil((9 * total - 10 * correct) / 1);
+  }
+  document.getElementById("drawerEstimate").textContent = estimatedAttempts;
+
+  // Update character mastery
+  updateCharacterMasteryDisplay();
+
+  // Update practice history
+  updatePracticeHistoryDisplay();
+
+  // Update lesson roadmap
+  updateLessonRoadmapDisplay();
+}
+
+function updateCharacterMasteryDisplay() {
+  const container = document.getElementById("characterMastery");
+  const currentChars = lessons[lesson];
+  const allChars = "KMRSUAPTLOWINJEF0YVG5/Q9ZH38B?427C1D6X=.,";
+
+  let html = '<div class="char-grid">';
+
+  for (let char of allChars) {
+    const stats = charStats[char];
+    const accuracy = stats ? (stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0) : 0;
+
+    let className = "char-unlearned";
+    if (currentChars.includes(char) || (lesson > 0 && lessons[lesson-1] && lessons[lesson-1].includes(char))) {
+      if (!stats || stats.total < 3) {
+        className = "char-unlearned";
+      } else if (accuracy >= 85) {
+        className = "char-mastered";
+      } else if (accuracy >= 60) {
+        className = "char-learning";
+      } else {
+        className = "char-trouble";
+      }
+    }
+
+    const title = stats && stats.total > 0 ? `${char}: ${accuracy}% (${stats.correct}/${stats.total})` : `${char}: Not practiced`;
+    html += `<div class="char-item ${className}" title="${title}">${char}</div>`;
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  // Update mastery count
+  const masteredCount = Object.keys(charStats).filter(char => {
+    const stats = charStats[char];
+    return stats && stats.total >= 3 && (stats.correct / stats.total) >= 0.85;
+  }).length;
+  document.getElementById("totalMastered").textContent = masteredCount;
+  document.getElementById("lessonsCompleted").textContent = lesson;
+}
+
+function updatePracticeHistoryDisplay() {
+  const historyChart = document.getElementById("historyChart");
+  const today = new Date();
+  let html = '';
+
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+
+    const dayData = sessionHistory.filter(session => session.date === dateStr);
+    const totalAccuracy = dayData.length > 0 ?
+      dayData.reduce((sum, session) => sum + session.accuracy, 0) / dayData.length : 0;
+
+    const height = Math.max(5, (totalAccuracy / 100) * 45);
+    const className = dayData.length > 0 ? "history-day active" : "history-day";
+
+    html += `<div class="${className}" style="height: ${height}px;" title="${dateStr}: ${Math.round(totalAccuracy)}% avg accuracy"></div>`;
+  }
+
+  historyChart.innerHTML = html;
+}
+
+function updateLessonRoadmapDisplay() {
+  const roadmapContainer = document.getElementById("lessonRoadmap");
+  let html = '<div class="lesson-roadmap">';
+
+  // Show lessons around current lesson
+  const startLesson = Math.max(0, lesson - 2);
+  const endLesson = Math.min(lessons.length - 1, lesson + 5);
+
+  for (let i = startLesson; i <= endLesson; i++) {
+    let className = "lesson-upcoming";
+    if (i < lesson) className = "lesson-completed";
+    else if (i === lesson) className = "lesson-current";
+
+    html += `<div class="lesson-item ${className}">L${i + 1}</div>`;
+  }
+
+  html += '</div>';
+  roadmapContainer.innerHTML = html;
+
+  // Update next characters
+  if (lesson < lessons.length - 1) {
+    const nextLessonChars = lessons[lesson + 1];
+    const currentChars = lessons[lesson];
+    const newChars = nextLessonChars.filter(char => !currentChars.includes(char));
+    document.getElementById("nextChars").textContent = newChars.join(", ") || "None";
+  } else {
+    document.getElementById("nextChars").textContent = "Course Complete!";
+  }
+}
+
+// Reset progress functionality
+function resetProgress() {
+  if (confirm("Are you sure you want to reset all progress? This action cannot be undone.\n\nThis will:\n• Reset to lesson 1\n• Clear all character statistics\n• Remove session history\n• Reset WPM to default")) {
+    // Clear localStorage
+    localStorage.removeItem("lesson");
+    localStorage.removeItem("charStats");
+    localStorage.removeItem("sessionHistory");
+    localStorage.removeItem("overallWPM");
+
+    // Reset global variables
+    lesson = 2; // Lesson 3 (K,M,R,S)
+    correct = 0;
+    total = 0;
+    overallWPM = 8;
+    charStats = {};
+    sessionHistory = [];
+    farnsworthCharSpacing = (60 / (overallWPM * 5)) - (60 / (characterWPM * 5));
+
+    // Update UI
+    updateLesson();
+    updateWPMDisplay();
+    updateCharacterKeyboard();
+    updateProgressContent();
+
+    // Close drawer and show success message
+    toggleProgressDrawer();
+    document.getElementById("output").textContent = "✅ Progress reset! Starting fresh from lesson 1.";
+  }
+}
+
+// Event listeners for progress drawer
+document.getElementById("progressToggle").onclick = toggleProgressDrawer;
+document.getElementById("closeProgress").onclick = toggleProgressDrawer;
+document.getElementById("progressOverlay").onclick = toggleProgressDrawer;
+document.getElementById("resetProgress").onclick = resetProgress;
 </script>
 </body>
 </html>
