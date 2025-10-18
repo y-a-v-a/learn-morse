@@ -29,6 +29,16 @@ This is a single-file web application that implements the Koch method for learni
 
 The app uses no external dependencies and works entirely offline once loaded.
 
+## iOS Safari Audio Setup
+
+When using the app on iOS devices (iPhone/iPad) with Safari:
+
+1. **First-time setup**: Tap the "Enable Sound" button that appears on first load
+2. **Check ringer switch**: Ensure the physical ringer switch on the side of your device is ON (not in silent mode)
+3. **Check volume**: Make sure your device volume is turned up using the volume buttons
+
+iOS Safari requires explicit user interaction to enable Web Audio, and the device must not be in silent mode for sounds to play.
+
 ## Screenshots
 
 ![Main practice interface](learn-morse-1.png)

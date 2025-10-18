@@ -332,8 +332,9 @@ function initAudioContext() {
   if (!audioContext) {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
   }
-  // Resume context if suspended (required for iOS Safari)
-  if (audioContext.state === 'suspended') {
+  // Always call resume() to ensure context is running (required for iOS Safari)
+  // iOS Safari creates AudioContext in 'suspended' state by default
+  if (audioContext.state !== 'running') {
     return audioContext.resume();
   }
   return Promise.resolve();
