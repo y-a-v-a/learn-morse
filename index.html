@@ -323,10 +323,25 @@ const morseMap = {
   "/": "-..-.","?": "..--..","=": "-...-",".": ".-.-.-",",": "--..--"
 };
 
+// Global AudioContext (created on first user interaction for iOS compatibility)
+let audioContext = null;
+
+function initAudioContext() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  // Resume context if suspended (required for iOS Safari)
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+  return audioContext;
+}
+
 function playMorse(char) {
   const code = morseMap[char];
   if (!code) return;
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+  const ctx = initAudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.connect(gain); gain.connect(ctx.destination);
