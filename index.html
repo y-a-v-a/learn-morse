@@ -6,11 +6,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
   <style>
+    /* Color Variables - Light Theme (Default) */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-button: #f8f8f8;
+      --bg-button-special: #eef;
+      --bg-selected: #e7f3ff;
+      --text-primary: #000000;
+      --text-secondary: #333333;
+      --text-muted: #666666;
+      --border-color: #ccc;
+      --accent-blue: #007bff;
+      --accent-blue-dark: #0056b3;
+      --accent-purple: #6f42c1;
+      --accent-green: #28a745;
+      --accent-yellow: #ffc107;
+      --accent-red: #dc3545;
+      --progress-bar-bg: #eee;
+      --history-day-bg: #e9ecef;
+      --overlay-bg: rgba(0, 0, 0, 0.5);
+      --drawer-bg: #ffffff;
+      --drawer-shadow: rgba(0, 0, 0, 0.3);
+      --lesson-completed-bg: #d4edda;
+      --lesson-completed-text: #155724;
+      --lesson-upcoming-bg: #e2e3e5;
+      --lesson-upcoming-text: #6c757d;
+    }
+
+    /* Dark Theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --bg-button: #3a3a3a;
+        --bg-button-special: #2a2a40;
+        --bg-selected: #1e3a5f;
+        --text-primary: #e0e0e0;
+        --text-secondary: #d0d0d0;
+        --text-muted: #999999;
+        --border-color: #555;
+        --accent-blue: #4a9eff;
+        --accent-blue-dark: #357abd;
+        --accent-purple: #9370db;
+        --accent-green: #48d597;
+        --accent-yellow: #ffd43b;
+        --accent-red: #ff6b6b;
+        --progress-bar-bg: #333;
+        --history-day-bg: #3a3a3a;
+        --overlay-bg: rgba(0, 0, 0, 0.7);
+        --drawer-bg: #242424;
+        --drawer-shadow: rgba(0, 0, 0, 0.6);
+        --lesson-completed-bg: #1e4d2b;
+        --lesson-completed-text: #7dffb3;
+        --lesson-upcoming-bg: #3a3a3a;
+        --lesson-upcoming-text: #999999;
+      }
+    }
+
     body {
       font-family: system-ui, sans-serif;
       padding: 1em;
       max-width: 700px;
       margin: auto;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
     }
     h1 { font-size: 1.4em; text-align: center; }
     #lessonInfo { text-align: center; margin: 1em 0; font-size: 1.2em; }
@@ -20,21 +80,21 @@
       margin: 0.2em;
       border-radius: 8px;
       border: 2px solid transparent;
-      background: #f8f8f8;
+      background: var(--bg-button);
+      color: var(--text-primary);
       flex: 1 0 14%;
       transition: all 0.2s ease;
     }
     button.selected {
       font-weight: bold;
-      border-color: #007bff !important;
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
-      background: #e7f3ff;
+      border-color: var(--accent-blue) !important;
+      background: var(--bg-selected);
     }
     #playBtn, #nextBtn {
       width: 100%;
       margin-top: 0.6em;
       font-weight: bold;
-      background: #eef;
+      background: var(--bg-button-special);
     }
     #keyboard {
       display: flex;
@@ -53,14 +113,14 @@
     .progress-section {
       margin-bottom: 1.5em;
       padding: 0.8em;
-      background: #f8f9fa;
+      background: var(--bg-secondary);
       border-radius: 8px;
-      border-left: 4px solid #007bff;
+      border-left: 4px solid var(--accent-blue);
     }
     .progress-section h3 {
       margin: 0 0 0.8em 0;
       font-size: 1.1em;
-      color: #333;
+      color: var(--text-secondary);
     }
     .char-grid {
       display: flex;
@@ -79,10 +139,10 @@
       font-size: 0.9em;
       color: white;
     }
-    .char-mastered { background: #28a745; }
-    .char-learning { background: #ffc107; color: #333; }
-    .char-trouble { background: #dc3545; }
-    .char-unlearned { background: #6c757d; }
+    .char-mastered { background: var(--accent-green); color: white; }
+    .char-learning { background: var(--accent-yellow); color: #000; }
+    .char-trouble { background: var(--accent-red); color: white; }
+    .char-unlearned { background: #6c757d; color: white; }
 
     .history-bar {
       display: flex;
@@ -93,12 +153,12 @@
     }
     .history-day {
       flex: 1;
-      background: #e9ecef;
+      background: var(--history-day-bg);
       min-height: 5px;
       border-radius: 2px;
     }
     .history-day.active {
-      background: linear-gradient(to top, #007bff 0%, #0056b3 100%);
+      background: linear-gradient(to top, var(--accent-blue) 0%, var(--accent-blue-dark) 100%);
     }
 
     .lesson-roadmap {
@@ -113,9 +173,9 @@
       font-size: 0.8em;
       font-weight: bold;
     }
-    .lesson-completed { background: #d4edda; color: #155724; }
-    .lesson-current { background: #007bff; color: white; }
-    .lesson-upcoming { background: #e2e3e5; color: #6c757d; }
+    .lesson-completed { background: var(--lesson-completed-bg); color: var(--lesson-completed-text); }
+    .lesson-current { background: var(--accent-blue); color: white; }
+    .lesson-upcoming { background: var(--lesson-upcoming-bg); color: var(--lesson-upcoming-text); }
 
     /* Toggle Switch Styles */
     .toggle-switch {
@@ -136,7 +196,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #ccc;
+      background-color: var(--border-color);
       transition: 0.3s;
       border-radius: 26px;
     }
@@ -152,10 +212,80 @@
       border-radius: 50%;
     }
     input:checked + .toggle-slider {
-      background-color: #6f42c1;
+      background-color: var(--accent-purple);
     }
     input:checked + .toggle-slider:before {
       transform: translateX(24px);
+    }
+
+    /* Additional UI Elements */
+    #progressToggle {
+      background: var(--bg-button);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    #progressBar {
+      background: var(--progress-bar-bg);
+    }
+
+    #progressOverlay {
+      background: var(--overlay-bg);
+    }
+
+    #progressDrawer {
+      background: var(--drawer-bg);
+      box-shadow: -2px 0 10px var(--drawer-shadow);
+      color: var(--text-primary);
+    }
+
+    #closeProgress {
+      color: var(--text-primary);
+    }
+
+    #enableAudioBtn {
+      background: var(--accent-green);
+    }
+
+    #resetProgress {
+      background: var(--accent-red);
+    }
+
+    input[type="range"] {
+      accent-color: var(--accent-blue);
+    }
+
+    /* Keyboard key states */
+    button.key-neutral {
+      background-color: var(--bg-button);
+      border-color: transparent;
+    }
+    button.key-good {
+      background-color: #d4edda;
+      border-color: var(--accent-green);
+    }
+    button.key-medium {
+      background-color: #fff3cd;
+      border-color: var(--accent-yellow);
+    }
+    button.key-poor {
+      background-color: #f8d7da;
+      border-color: var(--accent-red);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      button.key-good {
+        background-color: #1e4d2b;
+        border-color: var(--accent-green);
+      }
+      button.key-medium {
+        background-color: #4d4520;
+        border-color: var(--accent-yellow);
+      }
+      button.key-poor {
+        background-color: #4d1e23;
+        border-color: var(--accent-red);
+      }
     }
 
     @media (min-width: 768px) {
@@ -168,7 +298,7 @@
 </head>
 <body>
   <h1>Morse Practice</h1>
-  <button id="progressToggle" style="position: absolute; top: 1em; right: 1em; background: #f8f8f8; border: 1px solid #ccc; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2em; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center;">📊</button>
+  <button id="progressToggle" style="position: absolute; top: 1em; right: 1em; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2em; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center;">📊</button>
   <div id="lessonInfo">
     Lesson <span id="lessonNum"></span>: <span id="chars"></span>
   </div>
@@ -183,25 +313,25 @@
     <div id="sessionStats" style="font-size: 1.1em; margin-bottom: 0.5em;">
       Accuracy: <span id="accuracy">0</span>% (<span id="correctCount">0</span>/<span id="totalCount">0</span> correct)
     </div>
-    <div id="progressBar" style="width: 100%; background: #eee; border-radius: 10px; height: 20px; margin: 0.5em 0;">
+    <div id="progressBar" style="width: 100%; border-radius: 10px; height: 20px; margin: 0.5em 0;">
       <div id="progressFill" style="width: 0%; background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3); height: 100%; border-radius: 10px; transition: width 0.3s;"></div>
     </div>
-    <div id="advanceInfo" style="font-size: 0.9em; color: #666;">
+    <div id="advanceInfo" style="font-size: 0.9em; color: var(--text-muted);">
       Need 90% to advance • <span id="estimatedAttempts">0</span> more attempts estimated
     </div>
   </div>
 
-  <button id="enableAudioBtn" style="display: none; width: 100%; background: #28a745; color: white; font-weight: bold; margin-top: 0.6em;">🔊 Enable Sound (Tap to Start)</button>
+  <button id="enableAudioBtn" style="display: none; width: 100%; color: white; font-weight: bold; margin-top: 0.6em;">🔊 Enable Sound (Tap to Start)</button>
   <button id="playBtn">🔊 Play Character</button>
   <div id="keyboard"></div>
   <div id="output"></div>
   <button id="nextBtn">➡️ Next Lesson</button>
 
   <!-- Progress Drawer -->
-  <div id="progressOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;"></div>
-  <div id="progressDrawer" style="position: fixed; top: 0; right: -100%; width: 80%; max-width: 350px; height: 100%; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.3); z-index: 1002; transition: right 0.3s ease; overflow-y: auto;">
+  <div id="progressOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;"></div>
+  <div id="progressDrawer" style="position: fixed; top: 0; right: -100%; width: 80%; max-width: 350px; height: 100%; z-index: 1002; transition: right 0.3s ease; overflow-y: auto;">
     <div style="padding: 1em;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em; border-bottom: 1px solid #eee; padding-bottom: 0.5em;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5em;">
         <h2 style="margin: 0; font-size: 1.3em;">Progress Insights</h2>
         <button id="closeProgress" style="background: none; border: none; font-size: 1.5em; cursor: pointer; padding: 0.2em;">×</button>
       </div>
@@ -216,7 +346,7 @@
           <div style="margin-bottom: 0.3em;">
             Accuracy: <strong><span id="drawerAccuracy">0</span>%</strong> (<span id="drawerCorrect">0</span>/<span id="drawerTotal">0</span>)
           </div>
-          <div style="font-size: 0.9em; color: #666;">
+          <div style="font-size: 0.9em; color: var(--text-muted);">
             <span id="drawerEstimate">0</span> attempts to advance
           </div>
         </div>
@@ -227,7 +357,7 @@
           <div id="characterMastery">
             <!-- Character grid will be populated by JavaScript -->
           </div>
-          <div style="margin-top: 0.8em; font-size: 0.8em; color: #666;">
+          <div style="margin-top: 0.8em; font-size: 0.8em; color: var(--text-muted);">
             🟢 Mastered ≥85% • 🟡 Learning ≥60% • 🔴 Needs Practice &lt;60% • ⚫ Not Started
           </div>
         </div>
@@ -239,7 +369,7 @@
             <div class="history-bar" id="historyChart">
               <!-- History bars will be populated by JavaScript -->
             </div>
-            <div style="font-size: 0.8em; color: #666; text-align: center;">
+            <div style="font-size: 0.8em; color: var(--text-muted); text-align: center;">
               Last 7 days
             </div>
           </div>
@@ -255,18 +385,18 @@
           <div id="lessonRoadmap">
             <!-- Lesson items will be populated by JavaScript -->
           </div>
-          <div style="margin-top: 0.8em; font-size: 0.9em; color: #666;">
+          <div style="margin-top: 0.8em; font-size: 0.9em; color: var(--text-muted);">
             Next characters to learn: <strong><span id="nextChars">-</span></strong>
           </div>
         </div>
 
         <!-- Keyboard Settings -->
-        <div class="progress-section" style="border-left-color: #6f42c1;">
+        <div class="progress-section" style="border-left-color: var(--accent-purple);">
           <h3>Keyboard Settings</h3>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5em;">
             <div>
               <div style="font-weight: bold; margin-bottom: 0.3em;">Randomize Order</div>
-              <div style="font-size: 0.85em; color: #666;">Prevents memorizing by position</div>
+              <div style="font-size: 0.85em; color: var(--text-muted);">Prevents memorizing by position</div>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="keyboardRandomToggle">
@@ -276,12 +406,12 @@
         </div>
 
         <!-- Reset Progress -->
-        <div class="progress-section" style="border-left-color: #dc3545;">
+        <div class="progress-section" style="border-left-color: var(--accent-red);">
           <h3>Reset Progress</h3>
-          <div style="margin-bottom: 0.8em; font-size: 0.9em; color: #666;">
+          <div style="margin-bottom: 0.8em; font-size: 0.9em; color: var(--text-muted);">
             This will clear all your progress data, statistics, and reset you back to lesson 1.
           </div>
-          <button id="resetProgress" style="background: #dc3545; color: white; border: none; padding: 0.6em 1.2em; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
+          <button id="resetProgress" style="color: white; border: none; padding: 0.6em 1.2em; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
             🗑️ Reset All Progress
           </button>
         </div>
@@ -612,25 +742,25 @@ function updateCharacterKeyboard() {
     const key = document.getElementById(`key-${c}`);
     if (!key) continue; // Skip if key doesn't exist
 
+    // Remove all key state classes
+    key.classList.remove('key-neutral', 'key-good', 'key-medium', 'key-poor');
+
     if (currentChars.includes(c)) {
       const accuracy = getCharAccuracy(c);
       const stats = charStats[c];
 
       if (!stats || stats.total < 3) {
         // Not enough data - neutral
-        key.style.backgroundColor = "#f8f8f8";
+        key.classList.add('key-neutral');
       } else if (accuracy >= 85) {
         // Good accuracy - green
-        key.style.backgroundColor = "#d4edda";
-        key.style.borderColor = "#28a745";
+        key.classList.add('key-good');
       } else if (accuracy >= 60) {
         // Medium accuracy - yellow
-        key.style.backgroundColor = "#fff3cd";
-        key.style.borderColor = "#ffc107";
+        key.classList.add('key-medium');
       } else {
         // Poor accuracy - red (needs practice)
-        key.style.backgroundColor = "#f8d7da";
-        key.style.borderColor = "#dc3545";
+        key.classList.add('key-poor');
       }
 
       // Add accuracy info to title
@@ -639,8 +769,7 @@ function updateCharacterKeyboard() {
       }
     } else {
       // Reset style for characters not in current lesson
-      key.style.backgroundColor = "#f8f8f8";
-      key.style.borderColor = "#ccc";
+      key.classList.add('key-neutral');
       key.title = "";
     }
   }
