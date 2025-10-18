@@ -16,12 +16,19 @@
     #lessonInfo { text-align: center; margin: 1em 0; font-size: 1.2em; }
     button {
       font-size: 1.2em;
-      padding: 0.6em 0.8em;
-      margin: 0.3em;
+      padding: 0.4em 0.5em;
+      margin: 0.2em;
       border-radius: 8px;
       border: 1px solid #ccc;
       background: #f8f8f8;
       flex: 1 0 14%;
+      transition: all 0.2s ease;
+    }
+    button.selected {
+      font-weight: bold;
+      border: 2px solid #007bff;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+      transform: scale(1.05);
     }
     #playBtn, #nextBtn {
       width: 100%;
@@ -110,6 +117,47 @@
     .lesson-current { background: #007bff; color: white; }
     .lesson-upcoming { background: #e2e3e5; color: #6c757d; }
 
+    /* Toggle Switch Styles */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background-color: #6f42c1;
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
     @media (min-width: 768px) {
       #progressDrawer {
         width: 350px;
@@ -143,7 +191,7 @@
     </div>
   </div>
 
-  <button id="enableAudioBtn" style="display: none; background: #28a745; color: white; font-weight: bold;">🔊 Enable Sound (Tap to Start)</button>
+  <button id="enableAudioBtn" style="display: none; width: 100%; background: #28a745; color: white; font-weight: bold; margin-top: 0.6em;">🔊 Enable Sound (Tap to Start)</button>
   <button id="playBtn">🔊 Play Character</button>
   <div id="keyboard"></div>
   <div id="output"></div>
@@ -209,6 +257,21 @@
           </div>
           <div style="margin-top: 0.8em; font-size: 0.9em; color: #666;">
             Next characters to learn: <strong><span id="nextChars">-</span></strong>
+          </div>
+        </div>
+
+        <!-- Keyboard Settings -->
+        <div class="progress-section" style="border-left-color: #6f42c1;">
+          <h3>Keyboard Settings</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5em;">
+            <div>
+              <div style="font-weight: bold; margin-bottom: 0.3em;">Randomize Order</div>
+              <div style="font-size: 0.85em; color: #666;">Prevents memorizing by position</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="keyboardRandomToggle">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
         </div>
 
@@ -493,18 +556,54 @@ document.getElementById("playBtn").onclick = () => {
   }
 
   currentChar = mixedChars[Math.floor(Math.random() * mixedChars.length)];
+  document.getElementById("output").textContent = ""; // Clear previous feedback
+  clearSelectedButton(); // Clear previously selected button
   playMorse(currentChar);
 };
 
-// build keyboard
-const kb = document.getElementById("keyboard");
-for (let c of "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?.=,") {
-  const b = document.createElement("button");
-  b.textContent = c;
-  b.id = `key-${c}`;
-  b.onclick = () => checkGuess(c);
-  kb.appendChild(b);
+// Keyboard order management
+const DEFAULT_KEYBOARD_ORDER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?.=,";
+
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
+
+function buildKeyboard(order) {
+  const kb = document.getElementById("keyboard");
+  kb.innerHTML = ""; // Clear existing buttons
+
+  for (let c of order) {
+    const b = document.createElement("button");
+    b.textContent = c;
+    b.id = `key-${c}`;
+    b.onclick = () => checkGuess(c);
+    kb.appendChild(b);
+  }
+
+  // Reapply color coding after rebuild
+  updateCharacterKeyboard();
+}
+
+// Initial keyboard build - restore from localStorage if available
+function initializeKeyboard() {
+  const isRandom = localStorage.getItem("isKeyboardRandom") === "true";
+  const savedOrder = localStorage.getItem("keyboardRandomOrder");
+
+  if (isRandom && savedOrder) {
+    buildKeyboard(savedOrder);
+    document.getElementById("keyboardRandomToggle").checked = true;
+  } else {
+    buildKeyboard(DEFAULT_KEYBOARD_ORDER);
+    document.getElementById("keyboardRandomToggle").checked = false;
+  }
+}
+
+initializeKeyboard();
 
 function updateCharacterKeyboard() {
   // Color-code keys based on individual character accuracy
@@ -547,8 +646,22 @@ function updateCharacterKeyboard() {
   }
 }
 
+function clearSelectedButton() {
+  // Remove selected class from all keyboard buttons
+  const allButtons = document.querySelectorAll("#keyboard button");
+  allButtons.forEach(btn => btn.classList.remove("selected"));
+}
+
 function checkGuess(g) {
   if (!currentChar) return;
+
+  // Highlight the selected button
+  clearSelectedButton();
+  const selectedButton = document.getElementById(`key-${g}`);
+  if (selectedButton) {
+    selectedButton.classList.add("selected");
+  }
+
   total++;
   const wasCorrect = g === currentChar;
 
@@ -730,12 +843,14 @@ function updateLessonRoadmapDisplay() {
 
 // Reset progress functionality
 function resetProgress() {
-  if (confirm("Are you sure you want to reset all progress? This action cannot be undone.\n\nThis will:\n• Reset to lesson 1\n• Clear all character statistics\n• Remove session history\n• Reset WPM to default")) {
+  if (confirm("Are you sure you want to reset all progress? This action cannot be undone.\n\nThis will:\n• Reset to lesson 1\n• Clear all character statistics\n• Remove session history\n• Reset WPM to default\n• Reset keyboard to alphabetical order")) {
     // Clear localStorage
     localStorage.removeItem("lesson");
     localStorage.removeItem("charStats");
     localStorage.removeItem("sessionHistory");
     localStorage.removeItem("overallWPM");
+    localStorage.removeItem("keyboardRandomOrder");
+    localStorage.removeItem("isKeyboardRandom");
 
     // Reset global variables
     lesson = 2; // Lesson 3 (K,M,R,S)
@@ -749,6 +864,7 @@ function resetProgress() {
     // Update UI
     updateLesson();
     updateWPMDisplay();
+    initializeKeyboard(); // Reset keyboard to alphabetical
     updateCharacterKeyboard();
     updateProgressContent();
 
@@ -758,11 +874,31 @@ function resetProgress() {
   }
 }
 
+// Keyboard randomization toggle
+function toggleKeyboardOrder() {
+  const toggle = document.getElementById("keyboardRandomToggle");
+  const isRandom = toggle.checked;
+
+  if (isRandom) {
+    // Generate and save random order
+    const randomOrder = shuffleArray(DEFAULT_KEYBOARD_ORDER.split("")).join("");
+    localStorage.setItem("keyboardRandomOrder", randomOrder);
+    localStorage.setItem("isKeyboardRandom", "true");
+    buildKeyboard(randomOrder);
+  } else {
+    // Clear random order and use alphabetical
+    localStorage.removeItem("keyboardRandomOrder");
+    localStorage.setItem("isKeyboardRandom", "false");
+    buildKeyboard(DEFAULT_KEYBOARD_ORDER);
+  }
+}
+
 // Event listeners for progress drawer
 document.getElementById("progressToggle").onclick = toggleProgressDrawer;
 document.getElementById("closeProgress").onclick = toggleProgressDrawer;
 document.getElementById("progressOverlay").onclick = toggleProgressDrawer;
 document.getElementById("resetProgress").onclick = resetProgress;
+document.getElementById("keyboardRandomToggle").onchange = toggleKeyboardOrder;
 </script>
 </body>
 </html>
