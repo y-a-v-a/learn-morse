@@ -143,6 +143,7 @@
     </div>
   </div>
 
+  <button id="enableAudioBtn" style="display: none; background: #28a745; color: white; font-weight: bold;">🔊 Enable Sound (Tap to Start)</button>
   <button id="playBtn">🔊 Play Character</button>
   <div id="keyboard"></div>
   <div id="output"></div>
@@ -325,6 +326,7 @@ const morseMap = {
 
 // Global AudioContext (created on first user interaction for iOS compatibility)
 let audioContext = null;
+let audioEnabled = false;
 
 function initAudioContext() {
   if (!audioContext) {
@@ -332,28 +334,54 @@ function initAudioContext() {
   }
   // Resume context if suspended (required for iOS Safari)
   if (audioContext.state === 'suspended') {
-    audioContext.resume();
+    return audioContext.resume();
   }
-  return audioContext;
+  return Promise.resolve();
+}
+
+// Test audio by playing a very short silent tone to "unlock" iOS audio
+function enableAudio() {
+  return initAudioContext().then(() => {
+    // Play a very short, almost silent test tone to unlock audio on iOS
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    gain.gain.value = 0.01; // Very quiet
+    osc.frequency.value = 600;
+    osc.start();
+    osc.stop(audioContext.currentTime + 0.05); // 50ms
+    audioEnabled = true;
+  });
 }
 
 function playMorse(char) {
   const code = morseMap[char];
   if (!code) return;
 
-  const ctx = initAudioContext();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.connect(gain); gain.connect(ctx.destination);
+  // Ensure audio is initialized
+  if (!audioEnabled) {
+    initAudioContext().then(() => {
+      playMorseInternal(char, code);
+    });
+  } else {
+    playMorseInternal(char, code);
+  }
+}
+
+function playMorseInternal(char, code) {
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  osc.connect(gain); gain.connect(audioContext.destination);
   osc.frequency.value = 600; osc.start();
   let t = 0;
 
   // Play character at full speed
   for (let i = 0; i < code.length; i++) {
     const s = code[i];
-    gain.gain.setValueAtTime(1, ctx.currentTime + t);
+    gain.gain.setValueAtTime(1, audioContext.currentTime + t);
     t += (s === "." ? dot : 3 * dot);
-    gain.gain.setValueAtTime(0, ctx.currentTime + t);
+    gain.gain.setValueAtTime(0, audioContext.currentTime + t);
     if (i < code.length - 1) t += dot; // Inter-element spacing
   }
 
@@ -364,7 +392,7 @@ function playMorse(char) {
     t += charSpacing; // Standard spacing
   }
 
-  osc.stop(ctx.currentTime + t);
+  osc.stop(audioContext.currentTime + t);
 }
 
 function updateLesson() {
@@ -412,6 +440,31 @@ function updateWPMDisplay() {
 updateLesson();
 updateWPMDisplay();
 updateCharacterKeyboard();
+
+// Check if we need to show the "Enable Audio" button (iOS/Safari detection)
+const enableAudioBtn = document.getElementById("enableAudioBtn");
+const playBtn = document.getElementById("playBtn");
+
+// Show enable button on first load if audio not yet enabled
+if (!audioEnabled) {
+  enableAudioBtn.style.display = "block";
+  playBtn.style.display = "none";
+}
+
+// Enable Audio button handler
+enableAudioBtn.onclick = () => {
+  enableAudio().then(() => {
+    enableAudioBtn.style.display = "none";
+    playBtn.style.display = "block";
+    // Optionally play a test character
+    const testChar = lessons[lesson][0];
+    currentChar = testChar;
+    playMorse(testChar);
+  }).catch(err => {
+    console.error("Failed to enable audio:", err);
+    alert("Failed to enable audio. Please check your device settings.");
+  });
+};
 
 // WPM slider event handler
 document.getElementById("wpmSlider").oninput = (e) => {
