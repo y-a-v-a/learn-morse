@@ -223,6 +223,28 @@
       background: var(--bg-button);
       border: 1px solid var(--border-color);
       color: var(--text-primary);
+      position: relative;
+    }
+
+    /* Two horizontal lines icon */
+    #progressToggle::before,
+    #progressToggle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 2px;
+      background-color: var(--text-primary);
+      border-radius: 1px;
+    }
+
+    #progressToggle::before {
+      top: 15px;
+    }
+
+    #progressToggle::after {
+      bottom: 15px;
     }
 
     #progressBar {
@@ -298,7 +320,7 @@
 </head>
 <body>
   <h1>Morse Practice</h1>
-  <button id="progressToggle" style="position: absolute; top: 1em; right: 1em; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2em; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center;">📊</button>
+  <button id="progressToggle" style="position: absolute; top: 1em; right: 1em; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2em; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center;"></button>
   <div id="lessonInfo">
     Lesson <span id="lessonNum"></span>: <span id="chars"></span>
   </div>
