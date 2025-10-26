@@ -796,9 +796,12 @@ function checkGuess(g) {
 
   if (wasCorrect) {
     correct++;
-    document.getElementById("output").textContent = "✅ Correct!";
+    const correctMorse = morseMap[currentChar] || "";
+    document.getElementById("output").textContent = `✅ Correct: ${correctMorse}`;
   } else {
-    document.getElementById("output").textContent = `❌ Wrong, it was ${currentChar}`;
+    const guessMorse = morseMap[g] || "";
+    const correctMorse = morseMap[currentChar] || "";
+    document.getElementById("output").textContent = `❌ Wrong: ${guessMorse} is ${g}, but it was ${currentChar} ${correctMorse}`;
   }
 
   updateCharStats(currentChar, wasCorrect);
