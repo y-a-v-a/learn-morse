@@ -524,6 +524,16 @@
       border-left-color: var(--accent-red);
     }
 
+    .progress-section.about-section {
+      border-left-color: var(--text-muted);
+    }
+
+    .about-text {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
     .reset-warning {
       margin-bottom: 0.8em;
       font-size: 0.9em;
@@ -666,9 +676,9 @@
         </div>
 
         <!-- About -->
-        <div class="progress-section" style="border-left-color: var(--text-muted);">
+        <div class="progress-section about-section">
           <h3>About</h3>
-          <div style="font-size: 0.85em; color: var(--text-muted); line-height: 1.5;">
+          <div class="about-text">
             This app uses the Koch method to teach Morse code progressively, starting with two characters and adding more as you improve. Your progress is automatically saved in your browser. Created by Vincent Bruijn with Claude. <strong>iOS users:</strong> Enable your ringer switch to hear sounds.
           </div>
         </div>
