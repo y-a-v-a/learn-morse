@@ -316,6 +316,229 @@
         max-width: 350px;
       }
     }
+
+    /* Main Layout Styles */
+    #progressToggle {
+      position: absolute;
+      top: 1em;
+      right: 1em;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2em;
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #settings {
+      text-align: center;
+      margin: 1em 0;
+      font-size: 0.9em;
+    }
+
+    #wpmSlider {
+      width: min(150px, 60vw);
+      max-width: 150px;
+    }
+
+    .char-speed-label {
+      font-size: 0.8em;
+      color: var(--text-muted);
+      margin-top: 0.3em;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .char-speed-label {
+        color: var(--text-muted);
+      }
+    }
+
+    #progress {
+      text-align: center;
+      margin: 1em 0;
+    }
+
+    #sessionStats {
+      font-size: 1.1em;
+      margin-bottom: 0.5em;
+    }
+
+    #progressBar {
+      width: 100%;
+      border-radius: 10px;
+      height: 20px;
+      margin: 0.5em 0;
+    }
+
+    #progressFill {
+      width: 0%;
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3);
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+
+    #advanceInfo {
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
+    #enableAudioBtn {
+      display: none;
+      width: 100%;
+      color: white;
+      font-weight: bold;
+      margin-top: 0.6em;
+    }
+
+    /* Footer Styles */
+    footer {
+      margin-top: 2em;
+      padding: 1em 0;
+      text-align: center;
+      font-size: 0.85em;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+    }
+
+    footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Progress Drawer Structure */
+    #progressOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+    }
+
+    #progressDrawer {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 350px;
+      height: 100%;
+      z-index: 1002;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .drawer-content {
+      padding: 1em;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5em;
+    }
+
+    .drawer-header h2 {
+      margin: 0;
+      font-size: 1.3em;
+    }
+
+    #closeProgress {
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      padding: 0.2em;
+    }
+
+    /* Progress Section Elements */
+    .session-lesson {
+      font-size: 1.1em;
+      margin-bottom: 0.5em;
+    }
+
+    .session-accuracy {
+      margin-bottom: 0.3em;
+    }
+
+    .session-estimate {
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
+    .mastery-legend {
+      margin-top: 0.8em;
+      font-size: 0.8em;
+      color: var(--text-muted);
+    }
+
+    .history-days-label {
+      font-size: 0.8em;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .history-totals {
+      margin-top: 0.8em;
+    }
+
+    .roadmap-next {
+      margin-top: 0.8em;
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
+    .progress-section.keyboard-settings {
+      border-left-color: var(--accent-purple);
+    }
+
+    .keyboard-toggle-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5em;
+    }
+
+    .keyboard-toggle-title {
+      font-weight: bold;
+      margin-bottom: 0.3em;
+    }
+
+    .keyboard-toggle-desc {
+      font-size: 0.85em;
+      color: var(--text-muted);
+    }
+
+    .progress-section.reset-section {
+      border-left-color: var(--accent-red);
+    }
+
+    .reset-warning {
+      margin-bottom: 0.8em;
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
+    #resetProgress {
+      color: white;
+      border: none;
+      padding: 0.6em 1.2em;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -325,50 +548,54 @@
     Lesson <span id="lessonNum"></span>: <span id="chars"></span>
   </div>
 
-  <div id="settings" style="text-align: center; margin: 1em 0; font-size: 0.9em;">
-    <div>Overall WPM: <input type="range" id="wpmSlider" min="5" max="20" step="1" style="width: min(150px, 60vw); max-width: 150px;">
+  <div id="settings">
+    <div>Overall WPM: <input type="range" id="wpmSlider" min="5" max="20" step="1">
     <span id="wpmValue"></span> WPM</div>
-    <div style="font-size: 0.8em; color: #666; margin-top: 0.3em;">Character speed: 20 WPM</div>
+    <div class="char-speed-label">Character speed: 20 WPM</div>
   </div>
 
-  <div id="progress" style="text-align: center; margin: 1em 0;">
-    <div id="sessionStats" style="font-size: 1.1em; margin-bottom: 0.5em;">
+  <div id="progress">
+    <div id="sessionStats">
       Accuracy: <span id="accuracy">0</span>% (<span id="correctCount">0</span>/<span id="totalCount">0</span> correct)
     </div>
-    <div id="progressBar" style="width: 100%; border-radius: 10px; height: 20px; margin: 0.5em 0;">
-      <div id="progressFill" style="width: 0%; background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3); height: 100%; border-radius: 10px; transition: width 0.3s;"></div>
+    <div id="progressBar">
+      <div id="progressFill"></div>
     </div>
-    <div id="advanceInfo" style="font-size: 0.9em; color: var(--text-muted);">
+    <div id="advanceInfo">
       Need 90% to advance • <span id="estimatedAttempts">0</span> more attempts estimated
     </div>
   </div>
 
-  <button id="enableAudioBtn" style="display: none; width: 100%; color: white; font-weight: bold; margin-top: 0.6em;">🔊 Enable Sound (Tap to Start)</button>
+  <button id="enableAudioBtn">🔊 Enable Sound (Tap to Start)</button>
   <button id="playBtn">🔊 Play Character</button>
   <div id="keyboard"></div>
   <div id="output"></div>
   <button id="nextBtn">➡️ Next Lesson</button>
 
+  <footer>
+    <a href="https://www.vincentbruijn.nl" target="_blank" rel="noopener noreferrer">Vincent Bruijn</a> 2025 – made with Claude
+  </footer>
+
   <!-- Progress Drawer -->
-  <div id="progressOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;"></div>
-  <div id="progressDrawer" style="position: fixed; top: 0; right: -100%; width: 80%; max-width: 350px; height: 100%; z-index: 1002; transition: right 0.3s ease; overflow-y: auto;">
-    <div style="padding: 1em;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5em;">
-        <h2 style="margin: 0; font-size: 1.3em;">Progress Insights</h2>
-        <button id="closeProgress" style="background: none; border: none; font-size: 1.5em; cursor: pointer; padding: 0.2em;">×</button>
+  <div id="progressOverlay"></div>
+  <div id="progressDrawer">
+    <div class="drawer-content">
+      <div class="drawer-header">
+        <h2>Progress Insights</h2>
+        <button id="closeProgress">×</button>
       </div>
 
       <div id="progressContent">
         <!-- Session Overview -->
         <div class="progress-section">
           <h3>Current Session</h3>
-          <div style="font-size: 1.1em; margin-bottom: 0.5em;">
+          <div class="session-lesson">
             <strong>Lesson <span id="drawerLessonNum">1</span></strong>
           </div>
-          <div style="margin-bottom: 0.3em;">
+          <div class="session-accuracy">
             Accuracy: <strong><span id="drawerAccuracy">0</span>%</strong> (<span id="drawerCorrect">0</span>/<span id="drawerTotal">0</span>)
           </div>
-          <div style="font-size: 0.9em; color: var(--text-muted);">
+          <div class="session-estimate">
             <span id="drawerEstimate">0</span> attempts to advance
           </div>
         </div>
@@ -379,7 +606,7 @@
           <div id="characterMastery">
             <!-- Character grid will be populated by JavaScript -->
           </div>
-          <div style="margin-top: 0.8em; font-size: 0.8em; color: var(--text-muted);">
+          <div class="mastery-legend">
             🟢 Mastered ≥85% • 🟡 Learning ≥60% • 🔴 Needs Practice &lt;60% • ⚫ Not Started
           </div>
         </div>
@@ -391,11 +618,11 @@
             <div class="history-bar" id="historyChart">
               <!-- History bars will be populated by JavaScript -->
             </div>
-            <div style="font-size: 0.8em; color: var(--text-muted); text-align: center;">
+            <div class="history-days-label">
               Last 7 days
             </div>
           </div>
-          <div style="margin-top: 0.8em;">
+          <div class="history-totals">
             <div>Total Characters Mastered: <strong><span id="totalMastered">0</span></strong></div>
             <div>Lessons Completed: <strong><span id="lessonsCompleted">0</span></strong></div>
           </div>
@@ -407,18 +634,18 @@
           <div id="lessonRoadmap">
             <!-- Lesson items will be populated by JavaScript -->
           </div>
-          <div style="margin-top: 0.8em; font-size: 0.9em; color: var(--text-muted);">
+          <div class="roadmap-next">
             Next characters to learn: <strong><span id="nextChars">-</span></strong>
           </div>
         </div>
 
         <!-- Keyboard Settings -->
-        <div class="progress-section" style="border-left-color: var(--accent-purple);">
+        <div class="progress-section keyboard-settings">
           <h3>Keyboard Settings</h3>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5em;">
+          <div class="keyboard-toggle-wrapper">
             <div>
-              <div style="font-weight: bold; margin-bottom: 0.3em;">Randomize Order</div>
-              <div style="font-size: 0.85em; color: var(--text-muted);">Prevents memorizing by position</div>
+              <div class="keyboard-toggle-title">Randomize Order</div>
+              <div class="keyboard-toggle-desc">Prevents memorizing by position</div>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="keyboardRandomToggle">
@@ -428,12 +655,12 @@
         </div>
 
         <!-- Reset Progress -->
-        <div class="progress-section" style="border-left-color: var(--accent-red);">
+        <div class="progress-section reset-section">
           <h3>Reset Progress</h3>
-          <div style="margin-bottom: 0.8em; font-size: 0.9em; color: var(--text-muted);">
+          <div class="reset-warning">
             This will clear all your progress data, statistics, and reset you back to lesson 1.
           </div>
-          <button id="resetProgress" style="color: white; border: none; padding: 0.6em 1.2em; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
+          <button id="resetProgress">
             🗑️ Reset All Progress
           </button>
         </div>
