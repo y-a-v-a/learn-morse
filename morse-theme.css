@@ -1,0 +1,143 @@
+/* Shared theme for the learn-morse apps */
+
+/* Color Variables - Light Theme (Default) */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-button: #f8f8f8;
+  --bg-button-special: #eef;
+  --bg-selected: #e7f3ff;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --border-color: #ccc;
+  --accent-blue: #007bff;
+  --accent-blue-dark: #0056b3;
+  --accent-purple: #6f42c1;
+  --accent-green: #28a745;
+  --accent-yellow: #ffc107;
+  --accent-red: #dc3545;
+  --progress-bar-bg: #eee;
+  --history-day-bg: #e9ecef;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --drawer-bg: #ffffff;
+  --drawer-shadow: rgba(0, 0, 0, 0.3);
+  --lesson-completed-bg: #d4edda;
+  --lesson-completed-text: #155724;
+  --lesson-upcoming-bg: #e2e3e5;
+  --lesson-upcoming-text: #6c757d;
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-button: #3a3a3a;
+    --bg-button-special: #2a2a40;
+    --bg-selected: #1e3a5f;
+    --text-primary: #e0e0e0;
+    --text-secondary: #d0d0d0;
+    --text-muted: #999999;
+    --border-color: #555;
+    --accent-blue: #4a9eff;
+    --accent-blue-dark: #357abd;
+    --accent-purple: #9370db;
+    --accent-green: #48d597;
+    --accent-yellow: #ffd43b;
+    --accent-red: #ff6b6b;
+    --progress-bar-bg: #333;
+    --history-day-bg: #3a3a3a;
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+    --drawer-bg: #242424;
+    --drawer-shadow: rgba(0, 0, 0, 0.6);
+    --lesson-completed-bg: #1e4d2b;
+    --lesson-completed-text: #7dffb3;
+    --lesson-upcoming-bg: #3a3a3a;
+    --lesson-upcoming-text: #999999;
+  }
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  padding: 1em;
+  max-width: 700px;
+  margin: auto;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+h1 { font-size: 1.4em; text-align: center; }
+
+button {
+  font-size: 1.2em;
+  padding: 0.4em 0.5em;
+  margin: 0.2em;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: var(--bg-button);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+button.selected {
+  font-weight: bold;
+  border-color: var(--accent-blue) !important;
+  background: var(--bg-selected);
+}
+
+/* Answer feedback states */
+button.key-neutral {
+  background-color: var(--bg-button);
+  border-color: transparent;
+}
+button.key-good {
+  background-color: #d4edda;
+  border-color: var(--accent-green);
+}
+button.key-medium {
+  background-color: #fff3cd;
+  border-color: var(--accent-yellow);
+}
+button.key-poor {
+  background-color: #f8d7da;
+  border-color: var(--accent-red);
+}
+
+@media (prefers-color-scheme: dark) {
+  button.key-good {
+    background-color: #1e4d2b;
+    border-color: var(--accent-green);
+  }
+  button.key-medium {
+    background-color: #4d4520;
+    border-color: var(--accent-yellow);
+  }
+  button.key-poor {
+    background-color: #4d1e23;
+    border-color: var(--accent-red);
+  }
+}
+
+input[type="range"] {
+  accent-color: var(--accent-blue);
+}
+
+/* Footer */
+footer {
+  margin-top: 2em;
+  padding: 1em 0;
+  text-align: center;
+  font-size: 0.85em;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+}
+
+footer a {
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

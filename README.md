@@ -6,7 +6,10 @@ Vincent Bruijn
 
 ## Overview
 
-This is a single-file web application that implements the Koch method for learning Morse code. The Koch method is a proven approach that starts with just two characters and gradually adds more as the student achieves proficiency.
+Two small web apps that share a common Morse library (`morse.js`) and theme (`morse-theme.css`):
+
+- **`index.html`** implements the Koch method for learning individual characters. The Koch method is a proven approach that starts with just two characters and gradually adds more as the student achieves proficiency.
+- **`dictation.html`** takes it a step further: it plays short dictations of real English words in Morse code and asks you to pick what you heard from four choices, training whole-word pattern recognition instead of letter-by-letter decoding.
 
 ## Features
 
@@ -27,7 +30,16 @@ This is a single-file web application that implements the Koch method for learni
 3. **Advancement**: Achieve 90% accuracy to unlock the next lesson
 4. **Persistence**: All progress, settings, and statistics are saved locally in the browser
 
-The app uses no external dependencies and works entirely offline once loaded.
+The apps use no external dependencies and work entirely offline once loaded.
+
+## Word Dictation (`dictation.html`)
+
+- **Single-word rounds**: Hear a word played in Morse (Farnsworth timing, same WPM setting as the character app), then pick it from four multiple-choice options
+- **Curated word pools**: Common English words only — no obscure dictionary-only entries
+- **Accuracy-gated levels**: Start with 2-letter words; reach ≥90% accuracy over at least 20 words to unlock 3-letter words
+- **Smart distractors**: Wrong options are biased toward words sharing letters with the target, so you train real pattern discrimination
+- **Replay**: Replay the current word as often as you need before answering
+- **Persistence**: Level and per-level statistics are stored in localStorage, independent of the character-practice progress
 
 ## iOS Safari Audio Setup
 
