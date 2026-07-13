@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Morse Dictation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="morse-theme.css">
+  <style>
+    #levelInfo { text-align: center; margin: 1em 0; font-size: 1.2em; }
+
+    #settings {
+      text-align: center;
+      margin: 1em 0;
+      font-size: 0.9em;
+    }
+
+    #wpmSlider {
+      width: min(150px, 60vw);
+      max-width: 150px;
+    }
+
+    .char-speed-label {
+      font-size: 0.8em;
+      color: var(--text-muted);
+      margin-top: 0.3em;
+    }
+
+    #progress {
+      text-align: center;
+      margin: 1em 0;
+    }
+
+    #sessionStats {
+      font-size: 1.1em;
+      margin-bottom: 0.5em;
+    }
+
+    #progressBar {
+      width: 100%;
+      background: var(--progress-bar-bg);
+      border-radius: 10px;
+      height: 20px;
+      margin: 0.5em 0;
+    }
+
+    #progressFill {
+      width: 0%;
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #0abde3);
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+
+    #advanceInfo {
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
+    #playBtn, #nextBtn {
+      width: 100%;
+      margin-top: 0.6em;
+      font-weight: bold;
+      background: var(--bg-button-special);
+    }
+
+    #enableAudioBtn {
+      display: none;
+      width: 100%;
+      color: white;
+      font-weight: bold;
+      margin-top: 0.6em;
+      background: var(--accent-green);
+    }
+
+    #choices {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1em;
+      min-height: 3em;
+    }
+
+    #choices button {
+      flex: 1 0 40%;
+      font-size: 1.4em;
+      padding: 0.8em 0.5em;
+      letter-spacing: 0.15em;
+    }
+
+    #choices button:disabled {
+      opacity: 0.8;
+    }
+
+    #output {
+      margin-top: 1em;
+      font-size: 1.1em;
+      text-align: center;
+      min-height: 2.5em;
+    }
+
+    #resetDictation {
+      display: block;
+      margin: 2em auto 0;
+      font-size: 0.85em;
+      color: white;
+      background: var(--accent-red);
+      border: none;
+      padding: 0.5em 1em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Morse Dictation</h1>
+  <div id="levelInfo">
+    Level <span id="levelNum"></span>: <span id="levelDesc"></span>
+  </div>
+
+  <div id="settings">
+    <div>Overall WPM: <input type="range" id="wpmSlider" min="5" max="20" step="1">
+    <span id="wpmValue"></span> WPM</div>
+    <div class="char-speed-label">Character speed: 20 WPM</div>
+  </div>
+
+  <div id="progress">
+    <div id="sessionStats">
+      Accuracy: <span id="accuracy">0</span>% (<span id="correctCount">0</span>/<span id="totalCount">0</span> words)
+    </div>
+    <div id="progressBar">
+      <div id="progressFill"></div>
+    </div>
+    <div id="advanceInfo">
+      Need ≥90% over at least <span id="minWords">20</span> words to advance
+    </div>
+  </div>
+
+  <button id="enableAudioBtn">🔊 Enable Sound (Tap to Start)</button>
+  <button id="playBtn">🔊 Play Word</button>
+  <div id="choices"></div>
+  <div id="output">Listen to the word, then pick what you heard.</div>
+  <button id="nextBtn">➡️ Next Level</button>
+
+  <button id="resetDictation">🗑️ Reset Dictation Progress</button>
+
+  <footer>
+    <a href="index.html">← Character practice</a><br>
+    <a href="https://www.vincentbruijn.nl" target="_blank" rel="noopener noreferrer">Vincent Bruijn</a> 2025 – made with Claude
+  </footer>
+
+<script src="morse.js"></script>
+<script>
+// Curated common English words only — no dictionary-only oddities.
+// Add more levels (e.g. 4-letter words) by appending to this array.
+const levels = [
+  {
+    desc: "2-letter words",
+    words: [
+      "AD","AH","AM","AN","AS","AT","AW","AX","BE","BY","DO","EX","GO","HA",
+      "HE","HI","ID","IF","IN","IS","IT","MA","ME","MY","NO","OF","OH","OK",
+      "ON","OR","OX","PA","SO","TO","UM","UP","US","WE"
+    ]
+  },
+  {
+    desc: "3-letter words",
+    words: [
+      "ACE","ACT","ADD","AGE","AGO","AID","AIM","AIR","ALL","AND","ANT","ANY",
+      "APE","ARM","ART","ASH","ASK","ATE","BAD","BAG","BAN","BAR","BAT","BAY",
+      "BED","BEE","BEG","BET","BIG","BIN","BIT","BOW","BOX","BOY","BUD","BUG",
+      "BUN","BUS","BUT","BUY","CAB","CAN","CAP","CAR","CAT","COW","CRY","CUB",
+      "CUP","CUT","DAD","DAM","DAY","DEN","DEW","DID","DIG","DIM","DIP","DOG",
+      "DOT","DRY","DUE","DUG","EAR","EAT","EGG","EGO","ELF","END","ERA","EVE",
+      "EYE","FAN","FAR","FAT","FEE","FEW","FIG","FIN","FIT","FIX","FLY","FOG",
+      "FOR","FOX","FUN","FUR","GAP","GAS","GEM","GET","GOT","GUM","GUN","GUT",
+      "GUY","GYM","HAD","HAM","HAS","HAT","HAY","HEN","HER","HID","HIM","HIP",
+      "HIS","HIT","HOG","HOP","HOT","HOW","HUB","HUG","HUT","ICE","ILL","INK",
+      "ITS","JAM","JAR","JAW","JET","JOB","JOG","JOY","KEY","KID","KIT","LAB",
+      "LAD","LAP","LAW","LAY","LEG","LET","LID","LIE","LIP","LIT","LOG","LOT",
+      "LOW","MAD","MAN","MAP","MAT","MAY","MEN","MET","MIX","MOB","MOM","MUD",
+      "MUG","NAP","NET","NEW","NOD","NOR","NOT","NOW","NUT","OAK","ODD","OFF",
+      "OIL","OLD","ONE","OUR","OUT","OWE","OWL","OWN","PAD","PAN","PAT","PAW",
+      "PAY","PEA","PEN","PET","PIE","PIG","PIN","PIT","POP","POT","PRO","PUB",
+      "PUT","RAG","RAN","RAT","RAW","RED","RIB","RID","RIM","RIP","ROB","ROD",
+      "ROT","ROW","RUB","RUG","RUN","SAD","SAT","SAW","SEA","SEE","SET","SHE",
+      "SHY","SIN","SIP","SIR","SIT","SIX","SKI","SKY","SON","SPY","SUM","SUN",
+      "TAB","TAG","TAN","TAP","TAX","TEA","TEN","THE","TIE","TIN","TIP","TOE",
+      "TON","TOO","TOP","TOW","TOY","TRY","TUB","TWO","USE","VAN","VET","VIA",
+      "VOW","WAR","WAS","WAX","WAY","WEB","WED","WET","WHO","WHY","WIG","WIN",
+      "WIT","WON","WOW","YES","YET","YOU","ZIP","ZOO"
+    ]
+  }
+];
+
+const MIN_WORDS_TO_ADVANCE = 20;
+const ADVANCE_ACCURACY = 90;
+const CHOICE_COUNT = 4;
+const characterWPM = 20;
+
+let level = Math.min(parseInt(localStorage.getItem("dictationLevel") || "0"), levels.length - 1);
+let overallWPM = parseInt(localStorage.getItem("overallWPM") || "8");
+
+// Per-level word stats, persisted so a reload doesn't lose progress
+let levelStats = JSON.parse(localStorage.getItem("dictationStats") || "{}");
+
+let currentWord = null;
+let answered = true;
+
+function statsFor(lvl) {
+  if (!levelStats[lvl]) {
+    levelStats[lvl] = { correct: 0, total: 0 };
+  }
+  return levelStats[lvl];
+}
+
+function saveStats() {
+  localStorage.setItem("dictationStats", JSON.stringify(levelStats));
+}
+
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function letterOverlap(a, b) {
+  let n = 0;
+  for (const ch of new Set(a)) {
+    if (b.includes(ch)) n++;
+  }
+  return n;
+}
+
+// Prefer distractors sharing letters with the target — they sound similar,
+// which trains actual pattern discrimination instead of easy elimination
+function pickChoices(word, pool) {
+  const others = shuffleArray(pool.filter(w => w !== word));
+  others.sort((a, b) => letterOverlap(b, word) - letterOverlap(a, word));
+  return shuffleArray([word, ...others.slice(0, CHOICE_COUNT - 1)]);
+}
+
+function wordMorse(word) {
+  return word.split("").map(ch => MORSE_MAP[ch] || "").join("  ");
+}
+
+function playWord(word) {
+  MorseAudio.playText(word, { characterWPM, overallWPM });
+}
+
+function renderChoices(choices) {
+  const container = document.getElementById("choices");
+  container.innerHTML = "";
+  for (const word of choices) {
+    const b = document.createElement("button");
+    b.textContent = word;
+    b.dataset.word = word;
+    b.onclick = () => checkAnswer(word);
+    container.appendChild(b);
+  }
+}
+
+function setChoicesEnabled(enabled) {
+  document.querySelectorAll("#choices button").forEach(b => b.disabled = !enabled);
+}
+
+function startRound() {
+  const pool = levels[level].words;
+  currentWord = pool[Math.floor(Math.random() * pool.length)];
+  answered = false;
+  renderChoices(pickChoices(currentWord, pool));
+  document.getElementById("output").textContent = "What word did you hear? (tap Replay to hear it again)";
+  document.getElementById("playBtn").textContent = "🔁 Replay Word";
+  playWord(currentWord);
+}
+
+function checkAnswer(guess) {
+  if (answered || !currentWord) return;
+  answered = true;
+  setChoicesEnabled(false);
+
+  const stats = statsFor(level);
+  stats.total++;
+  const wasCorrect = guess === currentWord;
+
+  document.querySelectorAll("#choices button").forEach(b => {
+    if (b.dataset.word === currentWord) {
+      b.classList.add("key-good");
+    } else if (b.dataset.word === guess) {
+      b.classList.add("key-poor");
+    }
+  });
+
+  if (wasCorrect) {
+    stats.correct++;
+    document.getElementById("output").textContent = `✅ Correct: ${currentWord} (${wordMorse(currentWord)})`;
+  } else {
+    document.getElementById("output").textContent =
+      `❌ It was ${currentWord} (${wordMorse(currentWord)}), not ${guess} (${wordMorse(guess)})`;
+  }
+
+  saveStats();
+  document.getElementById("playBtn").textContent = "🔊 Play Next Word";
+  updateProgressDisplay();
+}
+
+function accuracyFor(lvl) {
+  const stats = statsFor(lvl);
+  return stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+}
+
+function canAdvance() {
+  const stats = statsFor(level);
+  return accuracyFor(level) >= ADVANCE_ACCURACY &&
+         stats.total >= MIN_WORDS_TO_ADVANCE &&
+         level < levels.length - 1;
+}
+
+function updateLevelDisplay() {
+  document.getElementById("levelNum").textContent = level + 1;
+  document.getElementById("levelDesc").textContent = levels[level].desc;
+  document.getElementById("minWords").textContent = MIN_WORDS_TO_ADVANCE;
+  updateProgressDisplay();
+}
+
+function updateProgressDisplay() {
+  const stats = statsFor(level);
+  const accuracy = accuracyFor(level);
+  const progressPercent = Math.min(100, (accuracy / ADVANCE_ACCURACY) * 100);
+
+  document.getElementById("accuracy").textContent = accuracy;
+  document.getElementById("correctCount").textContent = stats.correct;
+  document.getElementById("totalCount").textContent = stats.total;
+  document.getElementById("progressFill").style.width = progressPercent + "%";
+
+  const progressFill = document.getElementById("progressFill");
+  if (accuracy >= ADVANCE_ACCURACY) {
+    progressFill.style.background = "#0abde3";
+  } else if (accuracy >= 70) {
+    progressFill.style.background = "#feca57";
+  } else {
+    progressFill.style.background = "#ff6b6b";
+  }
+}
+
+function updateWPMDisplay() {
+  document.getElementById("wpmSlider").value = overallWPM;
+  document.getElementById("wpmValue").textContent = overallWPM;
+}
+
+updateLevelDisplay();
+updateWPMDisplay();
+
+const enableAudioBtn = document.getElementById("enableAudioBtn");
+const playBtn = document.getElementById("playBtn");
+
+if (!MorseAudio.isEnabled()) {
+  enableAudioBtn.style.display = "block";
+  playBtn.style.display = "none";
+}
+
+enableAudioBtn.onclick = () => {
+  MorseAudio.enable().then(() => {
+    enableAudioBtn.style.display = "none";
+    playBtn.style.display = "block";
+    startRound();
+  }).catch(err => {
+    console.error("Failed to enable audio:", err);
+    alert("Failed to enable audio. Please check your device settings.");
+  });
+};
+
+playBtn.onclick = () => {
+  if (currentWord && !answered) {
+    playWord(currentWord); // Replay the same word until it's answered
+  } else {
+    startRound();
+  }
+};
+
+document.getElementById("wpmSlider").oninput = (e) => {
+  overallWPM = parseInt(e.target.value);
+  localStorage.setItem("overallWPM", overallWPM);
+  updateWPMDisplay();
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  const stats = statsFor(level);
+  if (canAdvance()) {
+    level++;
+    localStorage.setItem("dictationLevel", level);
+    currentWord = null;
+    answered = true;
+    document.getElementById("choices").innerHTML = "";
+    document.getElementById("playBtn").textContent = "🔊 Play Word";
+    updateLevelDisplay();
+    document.getElementById("output").textContent = `Advanced to ${levels[level].desc}!`;
+  } else if (level >= levels.length - 1) {
+    document.getElementById("output").textContent =
+      accuracyFor(level) >= ADVANCE_ACCURACY && stats.total >= MIN_WORDS_TO_ADVANCE
+        ? "🏆 All levels complete — keep practicing!"
+        : "This is the last level for now.";
+  } else {
+    document.getElementById("output").textContent =
+      `Need ≥${ADVANCE_ACCURACY}% accuracy over at least ${MIN_WORDS_TO_ADVANCE} words to advance.`;
+  }
+};
+
+document.getElementById("resetDictation").onclick = () => {
+  if (confirm("Reset all dictation progress? This will clear your level and word statistics.")) {
+    localStorage.removeItem("dictationLevel");
+    localStorage.removeItem("dictationStats");
+    level = 0;
+    levelStats = {};
+    currentWord = null;
+    answered = true;
+    document.getElementById("choices").innerHTML = "";
+    document.getElementById("playBtn").textContent = "🔊 Play Word";
+    updateLevelDisplay();
+    document.getElementById("output").textContent = "✅ Dictation progress reset! Starting at level 1.";
+  }
+};
+</script>
+</body>
+</html>

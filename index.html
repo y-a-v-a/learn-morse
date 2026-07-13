@@ -5,90 +5,11 @@
   <title>Morse Practice</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="morse-theme.css">
   <style>
-    /* Color Variables - Light Theme (Default) */
-    :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f8f9fa;
-      --bg-button: #f8f8f8;
-      --bg-button-special: #eef;
-      --bg-selected: #e7f3ff;
-      --text-primary: #000000;
-      --text-secondary: #333333;
-      --text-muted: #666666;
-      --border-color: #ccc;
-      --accent-blue: #007bff;
-      --accent-blue-dark: #0056b3;
-      --accent-purple: #6f42c1;
-      --accent-green: #28a745;
-      --accent-yellow: #ffc107;
-      --accent-red: #dc3545;
-      --progress-bar-bg: #eee;
-      --history-day-bg: #e9ecef;
-      --overlay-bg: rgba(0, 0, 0, 0.5);
-      --drawer-bg: #ffffff;
-      --drawer-shadow: rgba(0, 0, 0, 0.3);
-      --lesson-completed-bg: #d4edda;
-      --lesson-completed-text: #155724;
-      --lesson-upcoming-bg: #e2e3e5;
-      --lesson-upcoming-text: #6c757d;
-    }
-
-    /* Dark Theme */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #2d2d2d;
-        --bg-button: #3a3a3a;
-        --bg-button-special: #2a2a40;
-        --bg-selected: #1e3a5f;
-        --text-primary: #e0e0e0;
-        --text-secondary: #d0d0d0;
-        --text-muted: #999999;
-        --border-color: #555;
-        --accent-blue: #4a9eff;
-        --accent-blue-dark: #357abd;
-        --accent-purple: #9370db;
-        --accent-green: #48d597;
-        --accent-yellow: #ffd43b;
-        --accent-red: #ff6b6b;
-        --progress-bar-bg: #333;
-        --history-day-bg: #3a3a3a;
-        --overlay-bg: rgba(0, 0, 0, 0.7);
-        --drawer-bg: #242424;
-        --drawer-shadow: rgba(0, 0, 0, 0.6);
-        --lesson-completed-bg: #1e4d2b;
-        --lesson-completed-text: #7dffb3;
-        --lesson-upcoming-bg: #3a3a3a;
-        --lesson-upcoming-text: #999999;
-      }
-    }
-
-    body {
-      font-family: system-ui, sans-serif;
-      padding: 1em;
-      max-width: 700px;
-      margin: auto;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-    }
-    h1 { font-size: 1.4em; text-align: center; }
     #lessonInfo { text-align: center; margin: 1em 0; font-size: 1.2em; }
-    button {
-      font-size: 1.2em;
-      padding: 0.4em 0.5em;
-      margin: 0.2em;
-      border-radius: 8px;
-      border: 2px solid transparent;
-      background: var(--bg-button);
-      color: var(--text-primary);
+    #keyboard button {
       flex: 1 0 14%;
-      transition: all 0.2s ease;
-    }
-    button.selected {
-      font-weight: bold;
-      border-color: var(--accent-blue) !important;
-      background: var(--bg-selected);
     }
     #playBtn, #nextBtn {
       width: 100%;
@@ -273,43 +194,6 @@
       background: var(--accent-red);
     }
 
-    input[type="range"] {
-      accent-color: var(--accent-blue);
-    }
-
-    /* Keyboard key states */
-    button.key-neutral {
-      background-color: var(--bg-button);
-      border-color: transparent;
-    }
-    button.key-good {
-      background-color: #d4edda;
-      border-color: var(--accent-green);
-    }
-    button.key-medium {
-      background-color: #fff3cd;
-      border-color: var(--accent-yellow);
-    }
-    button.key-poor {
-      background-color: #f8d7da;
-      border-color: var(--accent-red);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      button.key-good {
-        background-color: #1e4d2b;
-        border-color: var(--accent-green);
-      }
-      button.key-medium {
-        background-color: #4d4520;
-        border-color: var(--accent-yellow);
-      }
-      button.key-poor {
-        background-color: #4d1e23;
-        border-color: var(--accent-red);
-      }
-    }
-
     @media (min-width: 768px) {
       #progressDrawer {
         width: 350px;
@@ -392,25 +276,6 @@
       color: white;
       font-weight: bold;
       margin-top: 0.6em;
-    }
-
-    /* Footer Styles */
-    footer {
-      margin-top: 2em;
-      padding: 1em 0;
-      text-align: center;
-      font-size: 0.85em;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border-color);
-    }
-
-    footer a {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
     }
 
     /* Progress Drawer Structure */
@@ -583,6 +448,7 @@
   <button id="nextBtn">➡️ Next Lesson</button>
 
   <footer>
+    <a href="dictation.html">Word dictation practice →</a><br>
     <a href="https://www.vincentbruijn.nl" target="_blank" rel="noopener noreferrer">Vincent Bruijn</a> 2025 – made with Claude
   </footer>
 
@@ -686,6 +552,7 @@
     </div>
   </div>
 
+<script src="morse.js"></script>
 <script>
 const lessons = [
   ["K","M"], ["K","M","R"], ["K","M","R","S"], ["K","M","R","S","U"],
@@ -729,10 +596,6 @@ let lesson = parseInt(localStorage.getItem("lesson") || "2"); // Start at lesson
 let correct = 0, total = 0;
 const characterWPM = 20;
 let overallWPM = parseInt(localStorage.getItem("overallWPM") || "8");
-const dot = 1.2 / characterWPM;
-const charSpacing = 3 * dot; // Standard 3-dot spacing between characters
-const wordSpacing = 7 * dot; // Standard 7-dot spacing between words
-let farnsworthCharSpacing = (60 / (overallWPM * 5)) - (60 / (characterWPM * 5)); // Extra spacing for Farnsworth
 
 // Character accuracy tracking
 let charStats = JSON.parse(localStorage.getItem("charStats") || "{}");
@@ -773,87 +636,8 @@ function saveSessionData() {
   localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
 }
 
-const morseMap = {
-  A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.",
-  G: "--.", H: "....", I: "..", J: ".---", K: "-.-", L: ".-..",
-  M: "--", N: "-.", O: "---", P: ".--.", Q: "--.-", R: ".-.",
-  S: "...", T: "-", U: "..-", V: "...-", W: ".--", X: "-..-",
-  Y: "-.--", Z: "--..",
-  "0": "-----","1": ".----","2": "..---","3": "...--","4": "....-",
-  "5": ".....","6": "-....","7": "--...","8": "---..","9": "----.",
-  "/": "-..-.","?": "..--..","=": "-...-",".": ".-.-.-",",": "--..--"
-};
-
-// Global AudioContext (created on first user interaction for iOS compatibility)
-let audioContext = null;
-let audioEnabled = false;
-
-function initAudioContext() {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  // Always call resume() to ensure context is running (required for iOS Safari)
-  // iOS Safari creates AudioContext in 'suspended' state by default
-  if (audioContext.state !== 'running') {
-    return audioContext.resume();
-  }
-  return Promise.resolve();
-}
-
-// Test audio by playing a very short silent tone to "unlock" iOS audio
-function enableAudio() {
-  return initAudioContext().then(() => {
-    // Play a very short, almost silent test tone to unlock audio on iOS
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    gain.gain.value = 0.01; // Very quiet
-    osc.frequency.value = 600;
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.05); // 50ms
-    audioEnabled = true;
-  });
-}
-
 function playMorse(char) {
-  const code = morseMap[char];
-  if (!code) return;
-
-  // Ensure audio is initialized
-  if (!audioEnabled) {
-    initAudioContext().then(() => {
-      playMorseInternal(char, code);
-    });
-  } else {
-    playMorseInternal(char, code);
-  }
-}
-
-function playMorseInternal(char, code) {
-  const osc = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-  osc.connect(gain); gain.connect(audioContext.destination);
-  osc.frequency.value = 600; osc.start();
-  let t = 0;
-
-  // Play character at full speed
-  for (let i = 0; i < code.length; i++) {
-    const s = code[i];
-    gain.gain.setValueAtTime(1, audioContext.currentTime + t);
-    t += (s === "." ? dot : 3 * dot);
-    gain.gain.setValueAtTime(0, audioContext.currentTime + t);
-    if (i < code.length - 1) t += dot; // Inter-element spacing
-  }
-
-  // Add Farnsworth spacing after character (if overall WPM < character WPM)
-  if (overallWPM < characterWPM) {
-    t += Math.max(0, farnsworthCharSpacing);
-  } else {
-    t += charSpacing; // Standard spacing
-  }
-
-  osc.stop(audioContext.currentTime + t);
+  MorseAudio.playText(char, { characterWPM, overallWPM });
 }
 
 function updateLesson() {
@@ -907,14 +691,14 @@ const enableAudioBtn = document.getElementById("enableAudioBtn");
 const playBtn = document.getElementById("playBtn");
 
 // Show enable button on first load if audio not yet enabled
-if (!audioEnabled) {
+if (!MorseAudio.isEnabled()) {
   enableAudioBtn.style.display = "block";
   playBtn.style.display = "none";
 }
 
 // Enable Audio button handler
 enableAudioBtn.onclick = () => {
-  enableAudio().then(() => {
+  MorseAudio.enable().then(() => {
     enableAudioBtn.style.display = "none";
     playBtn.style.display = "block";
     // Optionally play a test character
@@ -930,7 +714,6 @@ enableAudioBtn.onclick = () => {
 // WPM slider event handler
 document.getElementById("wpmSlider").oninput = (e) => {
   overallWPM = parseInt(e.target.value);
-  farnsworthCharSpacing = (60 / (overallWPM * 5)) - (60 / (characterWPM * 5));
   localStorage.setItem("overallWPM", overallWPM);
   updateWPMDisplay();
 };
@@ -1063,11 +846,11 @@ function checkGuess(g) {
 
   if (wasCorrect) {
     correct++;
-    const correctMorse = morseMap[currentChar] || "";
+    const correctMorse = MORSE_MAP[currentChar] || "";
     document.getElementById("output").textContent = `✅ Correct: ${correctMorse}`;
   } else {
-    const guessMorse = morseMap[g] || "";
-    const correctMorse = morseMap[currentChar] || "";
+    const guessMorse = MORSE_MAP[g] || "";
+    const correctMorse = MORSE_MAP[currentChar] || "";
     document.getElementById("output").textContent = `❌ Wrong: ${guessMorse} is ${g}, but it was ${currentChar} ${correctMorse}`;
   }
 
@@ -1258,7 +1041,6 @@ function resetProgress() {
     overallWPM = 8;
     charStats = {};
     sessionHistory = [];
-    farnsworthCharSpacing = (60 / (overallWPM * 5)) - (60 / (characterWPM * 5));
 
     // Update UI
     updateLesson();
