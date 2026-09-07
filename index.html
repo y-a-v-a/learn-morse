@@ -549,11 +549,386 @@
       cursor: pointer;
       width: 100%;
     }
+
+    /* ==========================================================
+       Learn View — visual explanations of the code
+       ========================================================== */
+
+    /* Practice / Learn switcher */
+    #viewNav {
+      display: flex;
+      gap: 0.4em;
+      justify-content: center;
+      margin: 0.2em 0 1em;
+    }
+    .view-tab {
+      flex: 0 1 auto;
+      font-size: 0.95em;
+      padding: 0.4em 1.3em;
+      margin: 0;
+      border-radius: 20px;
+      border: 2px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .view-tab.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    /* Learn panels */
+    .learn-intro {
+      font-size: 0.9em;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0 0 1em;
+    }
+    #learnTabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3em;
+      margin-bottom: 1.2em;
+    }
+    .learn-tab {
+      flex: 1 1 auto;
+      font-size: 0.85em;
+      padding: 0.55em 0.4em;
+      margin: 0;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .learn-tab.active {
+      border-color: var(--accent-purple);
+      background: var(--bg-button-special);
+      color: var(--text-primary);
+      font-weight: bold;
+    }
+    .learn-panel { display: none; }
+    .learn-panel.active { display: block; }
+    .panel-title {
+      font-size: 1.05em;
+      margin: 0 0 0.4em;
+    }
+    .panel-note {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0 0 1em;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.9em;
+      font-size: 0.78em;
+      color: var(--text-muted);
+      margin-bottom: 0.7em;
+    }
+    .legend > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
+    }
+
+    /* dit / dah glyphs */
+    .sym-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      vertical-align: middle;
+    }
+    .dit, .dah {
+      display: inline-block;
+      height: 9px;
+      border-radius: 5px;
+      background: var(--accent-blue);
+    }
+    .dit { width: 9px; }
+    .dah { width: 27px; background: var(--accent-purple); }
+
+    /* (a) Binary tree */
+    .tree-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      padding: 0.4em;
+    }
+    .tree-scroll svg { display: block; }
+    .tree-edge { fill: none; }
+    .edge-dit {
+      stroke: var(--accent-blue);
+      stroke-width: 1.5;
+      stroke-dasharray: 3 3;
+    }
+    .edge-dah {
+      stroke: var(--accent-purple);
+      stroke-width: 3;
+    }
+    .tree-node { cursor: pointer; }
+    .tree-node rect {
+      fill: var(--bg-primary);
+      stroke: var(--border-color);
+      stroke-width: 1.5;
+    }
+    .tree-node text {
+      fill: var(--text-primary);
+      font-size: 12px;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: central;
+      font-family: system-ui, sans-serif;
+    }
+    .tree-node.in-lesson rect {
+      stroke: var(--accent-green);
+      stroke-width: 2.5;
+    }
+    .tree-node.on-path rect {
+      fill: var(--bg-selected);
+      stroke: var(--accent-blue);
+      stroke-width: 2.5;
+    }
+    .tree-stub circle { fill: var(--border-color); }
+    .tree-stub.on-path circle { fill: var(--accent-blue); }
+    .tree-root { cursor: default; }
+    .tree-root circle { fill: var(--text-muted); }
+    .tree-root text {
+      font-size: 9px;
+      font-weight: normal;
+      fill: var(--text-muted);
+    }
+    .tree-readout {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6em;
+      min-height: 2em;
+      margin-top: 0.7em;
+      font-size: 0.95em;
+      color: var(--text-secondary);
+    }
+
+    /* (b) One-column alphabet */
+    .alpha-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .alpha-row {
+      display: grid;
+      grid-template-columns: 1.8em 1fr auto;
+      align-items: center;
+      gap: 0.7em;
+      padding: 0.45em 0.7em;
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      border-left: 4px solid transparent;
+      cursor: pointer;
+    }
+    .alpha-row:hover { background: var(--bg-selected); }
+    .alpha-row.in-lesson { border-left-color: var(--accent-green); }
+    .alpha-char {
+      font-size: 1.25em;
+      font-weight: bold;
+    }
+    .alpha-name {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      margin-left: 0.7em;
+    }
+    .alpha-code {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .alpha-group {
+      font-size: 0.78em;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 1.4em 0 0.45em;
+    }
+    .alpha-group:first-child { margin-top: 0; }
+
+    /* (c1) Patterns — symmetry, inversion, families */
+    .pattern-block { margin-bottom: 1.8em; }
+    .pattern-block h4 {
+      font-size: 0.95em;
+      margin: 0 0 0.3em;
+      color: var(--text-secondary);
+    }
+    .pattern-desc {
+      font-size: 0.82em;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0 0 0.7em;
+    }
+    .pair-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45em;
+    }
+    .pair {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.45em 0.7em;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+    }
+    .pair-half {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 2.6em;
+      cursor: pointer;
+    }
+    .pair-char {
+      font-size: 1.05em;
+      font-weight: bold;
+    }
+    .pair-link {
+      color: var(--text-muted);
+      font-size: 0.85em;
+    }
+    .solo-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45em;
+    }
+    .solo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 0.45em 0.6em;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+    }
+    .chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.6em 0.7em;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      margin-bottom: 0.5em;
+    }
+    .chain-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .chain-step.ghost {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .chain-link {
+      color: var(--text-muted);
+      font-size: 0.85em;
+    }
+    .num-row {
+      display: grid;
+      grid-template-columns: 1.8em 1fr auto;
+      align-items: center;
+      gap: 0.7em;
+      padding: 0.4em 0.7em;
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+    .num-row:hover { background: var(--bg-selected); }
+    .num-note {
+      font-size: 0.78em;
+      color: var(--text-muted);
+    }
+
+    /* (c2) Rhythm — proportional timing */
+    .rhythm-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4em;
+      margin-bottom: 0.8em;
+    }
+    .mini-btn {
+      flex: 0 0 auto;
+      font-size: 0.8em;
+      padding: 0.35em 0.9em;
+      margin: 0;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .mini-btn.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+    }
+    .rhythm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .rhythm-row {
+      display: grid;
+      grid-template-columns: 1.6em 1fr 3.4em;
+      align-items: center;
+      gap: 0.6em;
+      padding: 0.35em 0.6em;
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      border-left: 4px solid transparent;
+      cursor: pointer;
+    }
+    .rhythm-row:hover { background: var(--bg-selected); }
+    .rhythm-row.in-lesson { border-left-color: var(--accent-green); }
+    .rhythm-char { font-weight: bold; }
+    .rhythm-track {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .rhythm-on {
+      height: 12px;
+      border-radius: 2px;
+      background: var(--accent-blue);
+    }
+    .rhythm-on.long { background: var(--accent-purple); }
+    .rhythm-off { height: 12px; }
+    .rhythm-units {
+      font-size: 0.72em;
+      color: var(--text-muted);
+      text-align: right;
+    }
   </style>
 </head>
 <body>
   <h1>Morse Practice</h1>
   <button id="progressToggle"></button>
+
+  <nav id="viewNav">
+    <button type="button" id="navPractice" class="view-tab active">🎧 Practice</button>
+    <button type="button" id="navLearn" class="view-tab">👁 Learn</button>
+  </nav>
+
+  <div id="practiceView">
   <div id="lessonInfo">
     Lesson <span id="lessonNum"></span>: <span id="chars"></span>
   </div>
@@ -581,6 +956,79 @@
   <div id="keyboard"></div>
   <div id="output"></div>
   <button id="nextBtn">➡️ Next Lesson</button>
+  </div><!-- /practiceView -->
+
+  <div id="learnView" hidden>
+    <p class="learn-intro">
+      Practice trains your ear. These four views train your eye: the same 41 characters
+      seen as a <strong>branching tree</strong>, a <strong>plain list</strong>, a set of
+      <strong>patterns</strong>, and as <strong>rhythm in time</strong>. Tap any character
+      anywhere on this page to hear it. Characters outlined in green are in your current lesson.
+    </p>
+
+    <div id="learnTabs">
+      <button type="button" class="learn-tab active" data-panel="panelTree">🌳 Tree</button>
+      <button type="button" class="learn-tab" data-panel="panelAlphabet">📋 A–Z</button>
+      <button type="button" class="learn-tab" data-panel="panelPatterns">🔀 Patterns</button>
+      <button type="button" class="learn-tab" data-panel="panelRhythm">🎵 Rhythm</button>
+    </div>
+
+    <section id="panelTree" class="learn-panel active">
+      <h3 class="panel-title">The dichotomic tree</h3>
+      <p class="panel-note">
+        Every character is a path from the root. A <em>dit</em> takes the upper branch, a
+        <em>dah</em> takes the lower one. This is how the code is decoded in real time:
+        you never wait for the whole symbol, you just keep stepping down. Short paths are
+        common letters — that was Morse's design intent.
+      </p>
+      <div class="legend">
+        <span><span class="dit"></span> dit · upper branch</span>
+        <span><span class="dah"></span> dah – lower branch</span>
+        <span>● junction with no character of its own</span>
+      </div>
+      <div class="tree-scroll" id="treeScroll"></div>
+      <div class="tree-readout" id="treeReadout">Tap a character in the tree to hear it and light up its path.</div>
+    </section>
+
+    <section id="panelAlphabet" class="learn-panel">
+      <h3 class="panel-title">One column, top to bottom</h3>
+      <p class="panel-note">
+        No structure, no cleverness: just the full table in reading order, with each code
+        drawn to scale. Useful as a reference you can scan, and for spotting how much
+        longer the numbers and punctuation are than the letters.
+      </p>
+      <div class="legend">
+        <span><span class="dit"></span> dit (1 unit)</span>
+        <span><span class="dah"></span> dah (3 units)</span>
+      </div>
+      <div id="alphabetList"></div>
+    </section>
+
+    <section id="panelPatterns" class="learn-panel">
+      <h3 class="panel-title">Patterns, not 41 separate facts</h3>
+      <p class="panel-note">
+        Morse is full of internal symmetry. Once you see the mirrors, the flips and the
+        families, the table stops being a list to memorize and becomes a handful of rules
+        with a few exceptions.
+      </p>
+      <div id="patternsContent"></div>
+    </section>
+
+    <section id="panelRhythm" class="learn-panel">
+      <h3 class="panel-title">Shapes in time</h3>
+      <p class="panel-note">
+        Drawn to real duration: a dit is 1 unit, a dah is 3, and the gap between elements
+        is 1. This is literally the shape your ear receives, so each character becomes a
+        silhouette rather than a spelling. Sort by length to see letters that share a rhythm.
+      </p>
+      <div class="rhythm-controls">
+        <button type="button" class="mini-btn active" data-sort="alpha">Table order</button>
+        <button type="button" class="mini-btn" data-sort="length">Shortest first</button>
+        <button type="button" class="mini-btn" data-sort="lesson">My lesson first</button>
+      </div>
+      <div id="rhythmList" class="rhythm-list"></div>
+    </section>
+  </div>
 
   <footer>
     <a href="https://www.vincentbruijn.nl" target="_blank" rel="noopener noreferrer">Vincent Bruijn</a> 2025 – made with Claude
@@ -1298,6 +1746,392 @@ document.getElementById("closeProgress").onclick = toggleProgressDrawer;
 document.getElementById("progressOverlay").onclick = toggleProgressDrawer;
 document.getElementById("resetProgress").onclick = resetProgress;
 document.getElementById("keyboardRandomToggle").onchange = toggleKeyboardOrder;
+
+/* ============================================================
+   Learn View — four visual perspectives on the code
+   ============================================================ */
+
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const DIGITS = "0123456789".split("");
+const PUNCT = ["/", "=", "?", ".", ","];
+const ALL_CHARS = [...LETTERS, ...DIGITS, ...PUNCT];
+const PUNCT_LABEL = {
+  "/": "slash",
+  "=": "break / BT prosign",
+  "?": "question mark",
+  ".": "full stop",
+  ",": "comma"
+};
+
+const codeToChar = {};
+Object.entries(morseMap).forEach(([ch, code]) => { codeToChar[code] = ch; });
+
+function escHTML(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function invertCode(code) {
+  return [...code].map(s => (s === "." ? "-" : ".")).join("");
+}
+function reverseCode(code) {
+  return [...code].reverse().join("");
+}
+// Duration in dit units: dit = 1, dah = 3, one unit of silence between elements
+function codeUnits(code) {
+  return [...code].reduce((sum, s) => sum + (s === "." ? 1 : 3), 0) + (code.length - 1);
+}
+function symbolsHTML(code) {
+  return '<span class="sym-row">' +
+    [...code].map(s => `<span class="${s === "." ? "dit" : "dah"}"></span>`).join("") +
+    "</span>";
+}
+function spokenCode(code) {
+  return [...code].map(s => (s === "." ? "dit" : "dah")).join(" ");
+}
+function isInLesson(ch) {
+  return lessons[lesson].includes(ch);
+}
+
+/* ---------- (a) Dichotomic tree ---------- */
+
+function buildMorseTrie() {
+  const root = { code: "", char: null, children: {} };
+  for (const ch of ALL_CHARS) {
+    const code = morseMap[ch];
+    if (!code) continue;
+    let node = root;
+    for (const sym of code) {
+      if (!node.children[sym]) {
+        node.children[sym] = { code: node.code + sym, char: null, children: {} };
+      }
+      node = node.children[sym];
+    }
+    node.char = ch;
+  }
+  return root;
+}
+
+let treeSelection = null;
+
+function renderTree() {
+  const root = buildMorseTrie();
+  let leafCount = 0;
+  let maxDepth = 0;
+
+  (function layout(node, depth) {
+    node.depth = depth;
+    if (depth > maxDepth) maxDepth = depth;
+    const kids = [".", "-"].filter(s => node.children[s]).map(s => node.children[s]);
+    if (kids.length === 0) {
+      node.x = leafCount++;
+      return;
+    }
+    kids.forEach(kid => layout(kid, depth + 1));
+    node.x = (kids[0].x + kids[kids.length - 1].x) / 2;
+  })(root, 0);
+
+  // Grows left to right: depth is horizontal, so the root and the short (common)
+  // characters are the first thing visible on a narrow screen.
+  const colW = 56, rowH = 30, padX = 30, padY = 14, nodeW = 26, nodeH = 21;
+  const width = padX * 2 + maxDepth * colW + nodeW;
+  const height = padY * 2 + (leafCount - 1) * rowH + nodeH + 14;
+  const px = n => padX + nodeW / 2 + n.depth * colW;
+  const py = n => padY + nodeH / 2 + n.x * rowH;
+
+  const edges = [];
+  const nodes = [];
+
+  (function walk(node) {
+    [".", "-"].forEach(sym => {
+      const kid = node.children[sym];
+      if (!kid) return;
+      edges.push(
+        `<line class="tree-edge ${sym === "." ? "edge-dit" : "edge-dah"}" ` +
+        `x1="${px(node)}" y1="${py(node)}" x2="${px(kid)}" y2="${py(kid)}"></line>`
+      );
+      walk(kid);
+    });
+
+    const onPath = treeSelection !== null && treeSelection.startsWith(node.code);
+
+    if (node.depth === 0) {
+      nodes.push(
+        `<g class="tree-node tree-root"><circle cx="${px(node)}" cy="${py(node)}" r="7"></circle>` +
+        `<text x="${px(node)}" y="${py(node) + 18}">start</text></g>`
+      );
+    } else if (node.char) {
+      const cls = ["tree-node", isInLesson(node.char) ? "in-lesson" : "", onPath ? "on-path" : ""]
+        .filter(Boolean).join(" ");
+      nodes.push(
+        `<g class="${cls}" data-char="${escHTML(node.char)}">` +
+        `<title>${escHTML(node.char)} = ${node.code}</title>` +
+        `<rect x="${px(node) - nodeW / 2}" y="${py(node) - nodeH / 2}" width="${nodeW}" height="${nodeH}" rx="6"></rect>` +
+        `<text x="${px(node)}" y="${py(node)}">${escHTML(node.char)}</text></g>`
+      );
+    } else {
+      nodes.push(
+        `<g class="tree-node tree-stub ${onPath ? "on-path" : ""}">` +
+        `<title>${node.code} — no character assigned</title>` +
+        `<circle cx="${px(node)}" cy="${py(node)}" r="4"></circle></g>`
+      );
+    }
+  })(root);
+
+  const container = document.getElementById("treeScroll");
+  const keepScroll = container.scrollLeft;
+  container.innerHTML =
+    `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" ` +
+    `role="img" aria-label="Morse code binary tree">${edges.join("")}${nodes.join("")}</svg>`;
+  container.scrollLeft = keepScroll;
+}
+
+function showTreeReadout(ch) {
+  const code = morseMap[ch];
+  document.getElementById("treeReadout").innerHTML =
+    `<strong>${escHTML(ch)}</strong> ${symbolsHTML(code)} ` +
+    `<span class="alpha-code">${code}</span> <span class="panel-note" style="margin:0">${spokenCode(code)}</span>`;
+}
+
+/* ---------- (b) One-column alphabet ---------- */
+
+function renderAlphabet() {
+  const groups = [
+    ["Letters", LETTERS],
+    ["Numbers", DIGITS],
+    ["Punctuation & prosigns", PUNCT]
+  ];
+  let html = "";
+  for (const [name, chars] of groups) {
+    html += `<div class="alpha-group">${name}</div><div class="alpha-list">`;
+    for (const ch of chars) {
+      const code = morseMap[ch];
+      const label = PUNCT_LABEL[ch] ? `<span class="alpha-name">${escHTML(PUNCT_LABEL[ch])}</span>` : "";
+      html +=
+        `<div class="alpha-row${isInLesson(ch) ? " in-lesson" : ""}" data-char="${escHTML(ch)}" ` +
+        `role="button" tabindex="0" title="Play ${escHTML(ch)}">` +
+        `<div class="alpha-char">${escHTML(ch)}</div>` +
+        `<div>${symbolsHTML(code)}${label}</div>` +
+        `<div class="alpha-code">${code}</div></div>`;
+    }
+    html += "</div>";
+  }
+  document.getElementById("alphabetList").innerHTML = html;
+}
+
+/* ---------- (c1) Patterns: symmetry, inversion, families ---------- */
+
+function charTileHTML(ch, cls) {
+  const code = morseMap[ch];
+  return `<div class="${cls}" data-char="${escHTML(ch)}" role="button" tabindex="0" title="Play ${escHTML(ch)}">` +
+    `<span class="pair-char">${escHTML(ch)}</span>${symbolsHTML(code)}</div>`;
+}
+
+function findPairs(transform) {
+  const pairs = [];
+  const seen = new Set();
+  for (const ch of ALL_CHARS) {
+    if (seen.has(ch)) continue;
+    const partner = codeToChar[transform(morseMap[ch])];
+    if (!partner || partner === ch) continue;
+    seen.add(ch);
+    seen.add(partner);
+    pairs.push([ch, partner]);
+  }
+  return pairs;
+}
+
+function findSelfSymmetric(transform) {
+  return ALL_CHARS.filter(ch => transform(morseMap[ch]) === morseMap[ch]);
+}
+
+function chainHTML(steps) {
+  return '<div class="chain">' + steps.map((step, i) => {
+    const link = i === 0 ? "" : '<span class="chain-link">→</span>';
+    if (step.ghost) {
+      return link + `<div class="chain-step ghost" title="unassigned in International Morse">` +
+        `<span class="pair-char">&empty;</span>${symbolsHTML(step.code)}</div>`;
+    }
+    return link + charTileHTML(step.char, "chain-step");
+  }).join("") + "</div>";
+}
+
+function renderPatterns() {
+  const mirrors = findPairs(reverseCode);
+  const palindromes = findSelfSymmetric(reverseCode);
+  const flips = findPairs(invertCode);
+
+  let html = "";
+
+  html += '<div class="pattern-block"><h4>1. Mirrors — read the code backwards</h4>' +
+    '<p class="pattern-desc">Reverse the order of the elements and you land on another character. ' +
+    'Learn one half of the pair and you get the other for free, as long as you keep the direction straight.</p>' +
+    '<div class="pair-grid">' +
+    mirrors.map(([a, b]) =>
+      `<div class="pair">${charTileHTML(a, "pair-half")}<span class="pair-link">↔</span>${charTileHTML(b, "pair-half")}</div>`
+    ).join("") +
+    "</div></div>";
+
+  html += '<div class="pattern-block"><h4>2. Palindromes — the same either way</h4>' +
+    '<p class="pattern-desc">These read identically forwards and backwards, so a mirror slip cannot hurt you. ' +
+    'They are the stable points of the whole system.</p>' +
+    '<div class="solo-grid">' +
+    palindromes.map(ch => charTileHTML(ch, "solo")).join("") +
+    "</div></div>";
+
+  html += '<div class="pattern-block"><h4>3. Flips — swap every dit and dah</h4>' +
+    '<p class="pattern-desc">Turn each dit into a dah and vice versa. Unlike the mirror, this pairs ' +
+    'characters that sound as unlike each other as the code allows: E and T, S and O. Worth knowing ' +
+    'because it is the one relation you will never mishear — if you are torn between two characters, ' +
+    'they are almost never a flip pair.</p>' +
+    '<div class="pair-grid">' +
+    flips.map(([a, b]) =>
+      `<div class="pair">${charTileHTML(a, "pair-half")}<span class="pair-link">⇄</span>${charTileHTML(b, "pair-half")}</div>`
+    ).join("") +
+    "</div></div>";
+
+  html += '<div class="pattern-block"><h4>4. Families — one element at a time</h4>' +
+    '<p class="pattern-desc">Two spines run through the code: keep adding dits, or keep adding dahs. ' +
+    'Everything else in the tree hangs off branches between these two extremes. Note the gap at four ' +
+    'dahs — international Morse never assigned it a character.</p>';
+  html += chainHTML([
+    { char: "E" }, { char: "I" }, { char: "S" }, { char: "H" }, { char: "5" }
+  ]);
+  html += chainHTML([
+    { char: "T" }, { char: "M" }, { char: "O" }, { ghost: true, code: "----" }, { char: "0" }
+  ]);
+  html += "</div>";
+
+  html += '<div class="pattern-block"><h4>5. The numbers are a counter</h4>' +
+    '<p class="pattern-desc">All ten digits are five elements long and follow one rule: ' +
+    'for 1–5 count the leading dits, then pad with dahs; from 6 to 0 it runs the other way. ' +
+    'You never have to memorize a digit — you count it.</p>';
+  for (const d of ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]) {
+    const code = morseMap[d];
+    const dits = [...code].filter(s => s === ".").length;
+    const note = code[0] === "."
+      ? `${dits} dit${dits === 1 ? "" : "s"}, then dahs`
+      : `${5 - dits} dah${5 - dits === 1 ? "" : "s"}, then dits`;
+    html +=
+      `<div class="num-row" data-char="${d}" role="button" tabindex="0" title="Play ${d}">` +
+      `<div class="alpha-char">${d}</div><div>${symbolsHTML(code)}</div>` +
+      `<div class="num-note">${note}</div></div>`;
+  }
+  html += "</div>";
+
+  document.getElementById("patternsContent").innerHTML = html;
+}
+
+/* ---------- (c2) Rhythm: proportional timing ---------- */
+
+let rhythmSort = "alpha";
+const RHYTHM_UNIT = 9; // pixels per dit unit
+
+function renderRhythm() {
+  let chars = [...ALL_CHARS];
+  if (rhythmSort === "length") {
+    chars.sort((a, b) => codeUnits(morseMap[a]) - codeUnits(morseMap[b]) || a.localeCompare(b));
+  } else if (rhythmSort === "lesson") {
+    chars.sort((a, b) => {
+      const diff = (isInLesson(b) ? 1 : 0) - (isInLesson(a) ? 1 : 0);
+      return diff || codeUnits(morseMap[a]) - codeUnits(morseMap[b]) || a.localeCompare(b);
+    });
+  }
+
+  const html = chars.map(ch => {
+    const code = morseMap[ch];
+    const track = [...code].map((s, i) => {
+      const gap = i < code.length - 1 ? `<span class="rhythm-off" style="width:${RHYTHM_UNIT}px"></span>` : "";
+      const w = (s === "." ? 1 : 3) * RHYTHM_UNIT;
+      return `<span class="rhythm-on${s === "-" ? " long" : ""}" style="width:${w}px"></span>${gap}`;
+    }).join("");
+    const units = codeUnits(code);
+    return `<div class="rhythm-row${isInLesson(ch) ? " in-lesson" : ""}" data-char="${escHTML(ch)}" ` +
+      `role="button" tabindex="0" title="${escHTML(ch)} = ${code} (${units} units)">` +
+      `<div class="rhythm-char">${escHTML(ch)}</div>` +
+      `<div class="rhythm-track">${track}</div>` +
+      `<div class="rhythm-units">${units}u</div></div>`;
+  }).join("");
+
+  document.getElementById("rhythmList").innerHTML = html;
+}
+
+/* ---------- Wiring ---------- */
+
+function renderLearnViews() {
+  renderTree();
+  renderAlphabet();
+  renderPatterns();
+  renderRhythm();
+}
+
+function showView(name) {
+  const learning = name === "learn";
+  document.getElementById("practiceView").hidden = learning;
+  document.getElementById("learnView").hidden = !learning;
+  document.getElementById("navPractice").classList.toggle("active", !learning);
+  document.getElementById("navLearn").classList.toggle("active", learning);
+  if (learning) renderLearnViews();
+  window.scrollTo(0, 0);
+}
+
+function showLearnPanel(panelId) {
+  document.querySelectorAll(".learn-panel").forEach(p => {
+    p.classList.toggle("active", p.id === panelId);
+  });
+  document.querySelectorAll(".learn-tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.panel === panelId);
+  });
+  localStorage.setItem("learnTab", panelId);
+}
+
+document.getElementById("navPractice").onclick = () => showView("practice");
+document.getElementById("navLearn").onclick = () => showView("learn");
+
+document.getElementById("learnTabs").addEventListener("click", (e) => {
+  const tab = e.target.closest(".learn-tab");
+  if (tab) showLearnPanel(tab.dataset.panel);
+});
+
+document.querySelector(".rhythm-controls").addEventListener("click", (e) => {
+  const btn = e.target.closest(".mini-btn");
+  if (!btn) return;
+  rhythmSort = btn.dataset.sort;
+  document.querySelectorAll(".rhythm-controls .mini-btn").forEach(b => {
+    b.classList.toggle("active", b === btn);
+  });
+  renderRhythm();
+});
+
+// One delegated handler: anything carrying data-char plays that character
+function handleLearnActivation(target) {
+  const el = target.closest("[data-char]");
+  if (!el) return;
+  const ch = el.dataset.char;
+  if (!morseMap[ch]) return;
+  playMorse(ch);
+  if (el.closest("#panelTree")) {
+    treeSelection = morseMap[ch];
+    renderTree();
+    showTreeReadout(ch);
+  }
+}
+
+document.getElementById("learnView").addEventListener("click", (e) => {
+  handleLearnActivation(e.target);
+});
+
+document.getElementById("learnView").addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const el = e.target.closest("[data-char]");
+  if (!el) return;
+  e.preventDefault();
+  handleLearnActivation(e.target);
+});
+
+// Restore the last-used panel (the Practice/Learn choice itself always starts on Practice)
+const savedLearnTab = localStorage.getItem("learnTab");
+if (savedLearnTab && document.getElementById(savedLearnTab)) {
+  showLearnPanel(savedLearnTab);
+}
 </script>
 </body>
 </html>
