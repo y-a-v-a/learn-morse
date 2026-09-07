@@ -8,6 +8,7 @@ This is a single-file HTML app implementing the Koch method for learning Morse c
 - **Progress tracking** with localStorage persistence
 - **Character mastery analysis** with color-coded feedback
 - **Mobile-first design** with slide-out progress drawer
+- **Learn view** with four visual perspectives on the code (dichotomic tree, one-column A–Z table, structural patterns, rhythm timeline), complementing the audio-only practice
 
 ## Technical Notes
 - Pure vanilla JavaScript, no dependencies

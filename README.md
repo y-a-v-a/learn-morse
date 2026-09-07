@@ -19,6 +19,18 @@ This is a single-file web application that implements the Koch method for learni
 - **Audio Generation**: Real-time Morse code audio using Web Audio API at 600Hz
 - **Character Mixing**: Mixes 70% current lesson characters with 30% review characters from previous lessons
 - **Progress Reset**: Option to completely reset all progress and start fresh
+- **Learn View**: A second view that explains the code visually, complementing the audio drill — a dichotomic tree, a one-column A–Z table, a patterns view (mirrors, palindromes, dit/dah flips, families, the digit rule), and a rhythm view drawn to real duration. Every character on the page is tappable to hear it.
+
+## The Learn View
+
+Practice is deliberately audio-only: characters are never shown during a lesson. The **Learn** tab is the counterpart to that — the whole code, laid out four ways, for when you want to reason about it rather than react to it.
+
+1. **Tree** — the dichotomic tree, growing left to right. A dit takes the upper branch, a dah the lower one, so every character is a path from the root. Tapping a character plays it and lights up its path.
+2. **A–Z** — one column, reading order, each code drawn to scale. A reference you can scan.
+3. **Patterns** — Morse as a system rather than a list: mirror pairs (A/N, D/U), palindromes, dit/dah flips (E/T, S/O), the two element families (E I S H 5 and T M O ∅ 0), and the counting rule behind the ten digits.
+4. **Rhythm** — each character as a proportional timeline (dit = 1 unit, dah = 3, gap = 1), so the drawing matches what the ear actually receives. Sortable by table order, by length, or by your current lesson.
+
+Characters in your current lesson are marked in green throughout.
 
 ## How It Works
 
